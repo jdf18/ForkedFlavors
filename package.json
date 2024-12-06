@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/jdf18/ForkedFlavors/issues"
   },
-  "homepage": "https://github.com/jdf18/ForkedFlavors#readme"
+  "homepage": "https://github.com/jdf18/ForkedFlavors#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
