@@ -1,0 +1,19 @@
+{
+  "name": "forkedflavors",
+  "version": "0.0.1",
+  "description": "A recipe-sharing platform where users can share creations, post comments, and fork recipes to create unique variations.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdf18/ForkedFlavors.git"
+  },
+  "author": "Jacob Flint",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jdf18/ForkedFlavors/issues"
+  },
+  "homepage": "https://github.com/jdf18/ForkedFlavors#readme"
+}
