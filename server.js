@@ -1,6 +1,7 @@
-const express = require('express');
-const app = express ();
+const app = require('./app.js');
 
-app.use(express.static('static'));
+const port = 8080;
 
-app.listen(8080)
+app.listen(port, () => {
+  console.log(`Forked Flavours app listening on port ${port}`);
+});
