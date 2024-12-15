@@ -4,7 +4,8 @@
   "description": "A recipe-sharing platform where users can share creations, post comments, and fork recipes to create unique variations.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "pretest": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,15 @@
   },
   "homepage": "https://github.com/jdf18/ForkedFlavors#readme",
   "dependencies": {
-    "express": "^4.21.2"
+    "bootstrap": "^5.3.3",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.13.0",
+    "jest": "^29.7.0"
   }
 }
