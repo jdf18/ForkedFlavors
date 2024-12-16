@@ -19,6 +19,7 @@
   "homepage": "https://github.com/jdf18/ForkedFlavors#readme",
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "eslint-plugin-jest": "^28.9.0",
     "express": "^4.21.2",
     "nodemon": "^3.1.9"
   },
