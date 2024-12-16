@@ -2,11 +2,13 @@
   "name": "forkedflavors",
   "version": "0.0.1",
   "description": "A recipe-sharing platform where users can share creations, post comments, and fork recipes to create unique variations.",
-  "main": "server.js",
+  "main": "./src/server.js",
   "scripts": {
-    "test": "jest",
+    "prepare": "husky",
     "pretest": "npx eslint .",
-    "prepare": "husky"
+    "test": "jest",
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js"
   },
   "repository": {
     "type": "git",
