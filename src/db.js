@@ -49,4 +49,38 @@ db.serialize(() => {
     `);
 });
 
-module.exports = db;
+async function getUserFromUserId(userId) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM users WHERE user_id = ?';
+
+        db.get(query, [userId], (err, row) => {
+            if (err) {
+                console.error('Error querying the database:', err.message);
+                reject(err);
+            } else {
+                resolve(row); // If no user is found, `row` will be null
+            }
+        });
+    });
+}
+
+async function getUserFromUsername(username) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM users WHERE username = ?';
+
+        db.get(query, [username], (err, row) => {
+            if (err) {
+                console.error('Error querying the database:', err.message);
+                reject(err);
+            } else {
+                resolve(row); // If no user is found, `row` will be null
+            }
+        });
+    });
+}
+
+module.exports = {
+    db,
+    getUserFromUserId,
+    getUserFromUsername,
+};

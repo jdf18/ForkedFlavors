@@ -4,6 +4,7 @@ const path = require('path');
 
 const express = require('express');
 const session = require('express-session');
+const db = require('./db');
 
 const app = express();
 
@@ -36,14 +37,19 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../static/login.html'));
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username or password is missing' });
     }
 
-    if (username === 'data' && password === 'data') {
+    const user = await db.getUserFromUsername(username);
+    if (!user) { // If the username does not exist in the database
+        return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    if (password === user.password_hash) {
         req.session.user = { user_id: 1 };
         return res.status(200).json({ username, message: 'Login successful' });
     }
