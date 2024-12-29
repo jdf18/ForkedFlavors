@@ -1,0 +1,6 @@
+services:
+  forked-flavors:
+    build: .
+    container_name: forked-flavors
+    ports:
+      - "80:8080"
