@@ -1,12 +1,16 @@
+// Load environment variables from .env file
 require('dotenv').config();
 
+// Require path module for path manipulations
 const path = require('path');
 
+// Create an express app
 const express = require('express');
-const session = require('express-session');
-const db = require('./db');
 
 const app = express();
+
+// Allow session data to be stored about each client in req.session
+const session = require('express-session');
 
 app.use(
     session({
@@ -21,10 +25,18 @@ app.use(
     }),
 );
 
+// Configure express app
 app.use(express.json());
 
 app.use(express.static('static'));
 app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/dist'));
+
+// Import database objects from ./db.js
+const db = require('./db');
+
+db.connect('./data/forkedflavors.db');
+
+// Login system functions
 
 function requireLogin(req, res, next) {
     if (!req.session.user) {
@@ -33,9 +45,25 @@ function requireLogin(req, res, next) {
     return next();
 }
 
+function loginUser(req, user) {
+    req.session.user = { user_id: user.user_id };
+}
+
+function logoutUser(res) {
+    res.clearCookie('connect.sid');
+}
+
+// Simple GET HTML API Endpoints
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../static/login.html'));
 });
+
+app.get('/dashboard', requireLogin, (req, res) => {
+    res.send(`Welcome, ${req.session.user.user_id}`);
+});
+
+// Other API Endpoints
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -50,7 +78,7 @@ app.post('/login', async (req, res) => {
     }
 
     if (password === user.password_hash) {
-        req.session.user = { user_id: 1 };
+        loginUser(req, user);
         return res.status(200).json({ username, message: 'Login successful' });
     }
     return res.status(401).json({ message: 'Invalid username or password' });
@@ -61,13 +89,9 @@ app.all('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Error logging out' });
         }
-        res.clearCookie('connect.sid');
+        logoutUser(res);
         return res.status(200).json({ message: 'Logged out' });
     });
-});
-
-app.get('/dashboard', requireLogin, (req, res) => {
-    res.send(`Welcome, ${req.session.user.user_id}`);
 });
 
 module.exports = app;
