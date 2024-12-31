@@ -116,7 +116,7 @@ describe('Database getUserFromUserId method', () => {
         });
     });
 
-    it('Should error when given an invalid user id', async () => {
+    it('Should return null when given an invalid user id', async () => {
         expect(db.getDb()).toBeDefined();
 
         const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
@@ -125,6 +125,45 @@ describe('Database getUserFromUserId method', () => {
 
         expect(await db.getUserFromUserId(2)).toBe(null);
         expect(await db.getUserFromUserId('invalid_data')).toBe(null);
+
+        db.close();
+    });
+});
+
+describe('Database getUserFromUsername method', () => {
+    beforeEach(async () => {
+        await db.connect(':memory:', false);
+    });
+
+    it('Should error when not connected to database', async () => {
+        db.close();
+
+        await expect(db.getUserFromUsername('test username')).rejects.toThrow('Database not yet initialized. Call `connect() first.`');
+    });
+
+    it('Should return a user object when given a valid username', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+        stmt.run();
+        stmt.finalize();
+
+        expect(await db.getUserFromUsername('test_user')).toEqual({
+            user_id: 1,
+            username: 'test_user',
+            password_hash: 'test_password',
+        });
+    });
+
+    it('Should return null when given an invalid username', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+        stmt.run();
+        stmt.finalize();
+
+        expect(await db.getUserFromUsername('invalid_name')).toBe(null);
+        expect(await db.getUserFromUsername(212)).toBe(null);
 
         db.close();
     });

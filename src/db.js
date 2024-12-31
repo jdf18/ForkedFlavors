@@ -121,6 +121,8 @@ async function getUserFromUsername(username) {
             if (err) {
                 console.error('Error querying the database:', err.message);
                 reject(err);
+            } else if (!row) { // If no user is found, `row` will be null
+                resolve(null);
             } else {
                 resolve({
                     user_id: row.user_id,
