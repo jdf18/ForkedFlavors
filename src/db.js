@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 let db;
 
 // Try to connect to the database file
-function connect(databasePath, verbose = true) {
+function connect(databasePath) {
     // Check that the file exists
     if (!(fs.existsSync(databasePath) || databasePath === ':memory:')) {
         return new Promise((resolve, reject) => {
@@ -18,11 +18,9 @@ function connect(databasePath, verbose = true) {
         db = new sqlite3.Database(databasePath, sqlite3.OPEN_READWRITE, (err) => {
             if (err) {
                 console.log('Error connecting to database:', err.message);
-                return reject(new Error('Error connecting to database:', err.message));
+                return reject(new Error(`Error connecting to database: ${err.message}`));
             }
-            if (verbose) {
-                console.log(`Connected to the ForkedFlavors database. ${databasePath}`);
-            }
+            console.log(`Connected to the ForkedFlavors database. ${databasePath}`);
             return resolve();
         });
 
@@ -94,8 +92,7 @@ async function getUserFromUserId(userId) {
 
         db.get(query, [userId], (err, row) => {
             if (err) {
-                console.log('Error querying the database:', err.message);
-                reject(err);
+                reject(new Error(`Error querying the database: ${err.message}`));
             } else if (!row) { // If no user is found, `row` will be null
                 resolve(null);
             } else {
@@ -119,8 +116,7 @@ async function getUserFromUsername(username) {
 
         db.get(query, [username], (err, row) => {
             if (err) {
-                console.error('Error querying the database:', err.message);
-                reject(err);
+                reject(new Error(`Error querying the database: ${err.message}`));
             } else if (!row) { // If no user is found, `row` will be null
                 resolve(null);
             } else {

@@ -31,6 +31,18 @@ describe('Database initialization', () => {
         }).toThrow('Database not yet initialized. Call `connect() first.`');
     });
 
+    test('should fail to open database if does not have file permissions', async () => {
+        // Check that the database file does not exist
+        expect(fs.existsSync(TEST_DB_FILE)).toBe(false);
+        fs.writeFileSync(TEST_DB_FILE, '');
+        fs.chmodSync(TEST_DB_FILE, 0o000);
+        expect(fs.existsSync(TEST_DB_FILE)).toBe(true);
+
+        await db.connect(TEST_DB_FILE, true);
+        expect(db.getDb()).toBeDefined();
+        db.close();
+    });
+
     test('should initialize the database from a existing .db file', async () => {
         // Check that the database file does not exist
         expect(fs.existsSync(TEST_DB_FILE)).toBe(false);
@@ -99,7 +111,9 @@ describe('Database getUserFromUserId method', () => {
     it('Should error when not connected to database', async () => {
         db.close();
 
-        await expect(db.getUserFromUserId(1)).rejects.toThrow('Database not yet initialized. Call `connect() first.`');
+        await expect(db.getUserFromUserId(1)).rejects.toThrow(
+            'Database not yet initialized. Call `connect() first.`',
+        );
     });
 
     it('Should return a user object when given a valid user id', async () => {
@@ -128,6 +142,19 @@ describe('Database getUserFromUserId method', () => {
 
         db.close();
     });
+
+    it('Should error if there is a problem with the database and an SQL error', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        // Drop the users table, which will cause an SQL error in the getUserFromUserId function
+        const stmt = db.getDb().prepare('DROP TABLE users');
+        stmt.run();
+        stmt.finalize();
+
+        await expect(db.getUserFromUserId(1)).rejects.toThrow(
+            'Error querying the database: SQLITE_ERROR: no such table: users',
+        );
+    });
 });
 
 describe('Database getUserFromUsername method', () => {
@@ -138,7 +165,9 @@ describe('Database getUserFromUsername method', () => {
     it('Should error when not connected to database', async () => {
         db.close();
 
-        await expect(db.getUserFromUsername('test username')).rejects.toThrow('Database not yet initialized. Call `connect() first.`');
+        await expect(db.getUserFromUsername('test username')).rejects.toThrow(
+            'Database not yet initialized. Call `connect() first.`',
+        );
     });
 
     it('Should return a user object when given a valid username', async () => {
@@ -166,5 +195,18 @@ describe('Database getUserFromUsername method', () => {
         expect(await db.getUserFromUsername(212)).toBe(null);
 
         db.close();
+    });
+
+    it('Should error if there is a problem with the database and an SQL error', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        // Drop the users table, which will cause an SQL error in the getUserFromUserId function
+        const stmt = db.getDb().prepare('DROP TABLE users');
+        stmt.run();
+        stmt.finalize();
+
+        await expect(db.getUserFromUsername('test_user')).rejects.toThrow(
+            'Error querying the database: SQLITE_ERROR: no such table: users',
+        );
     });
 });
