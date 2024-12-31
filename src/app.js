@@ -34,7 +34,7 @@ app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/d
 // Import database objects from ./db.js
 const db = require('./db');
 
-db.connect('./data/forkedflavors.db');
+db.connect('./data/forkedflavors.db').then(() => {});
 
 // Login system functions
 

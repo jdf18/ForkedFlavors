@@ -84,23 +84,26 @@ function close() {
 }
 
 async function getUserFromUserId(userId) {
-    if (!db) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
-    }
-
     return new Promise((resolve, reject) => {
+        if (!db) {
+            reject(new Error('Database not yet initialized. Call `connect() first.`'));
+            return;
+        }
+
         const query = 'SELECT * FROM users WHERE user_id = ?';
 
         db.get(query, [userId], (err, row) => {
             if (err) {
-                console.error('Error querying the database:', err.message);
+                console.log('Error querying the database:', err.message);
                 reject(err);
+            } else if (!row) { // If no user is found, `row` will be null
+                resolve(null);
             } else {
                 resolve({
                     user_id: row.user_id,
                     username: row.username,
                     password_hash: row.password_hash,
-                }); // If no user is found, `row` will be null
+                });
             }
         });
     });

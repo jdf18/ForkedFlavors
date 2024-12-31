@@ -19,6 +19,18 @@ describe('Database initialization', () => {
         }
     });
 
+    test('should fail to close db object if not connected', () => {
+        expect(() => {
+            db.close();
+        }).toThrow('Database not yet initialized. Call `connect() first.`');
+    });
+
+    test('should fail to get db object if not connected', () => {
+        expect(() => {
+            db.getDb();
+        }).toThrow('Database not yet initialized. Call `connect() first.`');
+    });
+
     test('should initialize the database from a existing .db file', async () => {
         // Check that the database file does not exist
         expect(fs.existsSync(TEST_DB_FILE)).toBe(false);
@@ -76,5 +88,44 @@ describe('Database initialization', () => {
 
         expect(commentsTable).toBeDefined();
         expect(commentsTable.name).toBe('comments');
+    });
+});
+
+describe('Database getUserFromUserId method', () => {
+    beforeEach(async () => {
+        await db.connect(':memory:', false);
+    });
+
+    it('Should error when not connected to database', async () => {
+        db.close();
+
+        await expect(db.getUserFromUserId(1)).rejects.toThrow('Database not yet initialized. Call `connect() first.`');
+    });
+
+    it('Should return a user object when given a valid user id', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+        stmt.run();
+        stmt.finalize();
+
+        expect(await db.getUserFromUserId(1)).toEqual({
+            user_id: 1,
+            username: 'test_user',
+            password_hash: 'test_password',
+        });
+    });
+
+    it('Should error when given an invalid user id', async () => {
+        expect(db.getDb()).toBeDefined();
+
+        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+        stmt.run();
+        stmt.finalize();
+
+        expect(await db.getUserFromUserId(2)).toBe(null);
+        expect(await db.getUserFromUserId('invalid_data')).toBe(null);
+
+        db.close();
     });
 });

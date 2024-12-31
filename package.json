@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "husky",
     "pretest": "npx eslint .",
-    "test": "jest --coverage",
+    "test": "jest --verbose --coverage --silent=false",
     "start": "node ./src/server.js",
     "dev": "nodemon ./src/server.js"
   },
