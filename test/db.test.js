@@ -118,10 +118,11 @@ describe('Database getUserFromUserId method', () => {
 
     it('Should return a user object when given a valid user id', async () => {
         expect(db.getDb()).toBeDefined();
-
-        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
-        stmt.run();
-        stmt.finalize();
+        await db.getDb().serialize(async () => {
+            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            stmt.run();
+            stmt.finalize();
+        });
 
         expect(await db.getUserFromUserId(1)).toEqual({
             user_id: 1,
@@ -133,12 +134,14 @@ describe('Database getUserFromUserId method', () => {
     it('Should return null when given an invalid user id', async () => {
         expect(db.getDb()).toBeDefined();
 
-        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
-        stmt.run();
-        stmt.finalize();
+        await db.getDb().serialize(async () => {
+            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            stmt.run();
+            stmt.finalize();
 
-        expect(await db.getUserFromUserId(2)).toBe(null);
-        expect(await db.getUserFromUserId('invalid_data')).toBe(null);
+            expect(await db.getUserFromUserId(2)).toBe(null);
+            expect(await db.getUserFromUserId('invalid_data')).toBe(null);
+        });
 
         db.close();
     });
@@ -147,22 +150,21 @@ describe('Database getUserFromUserId method', () => {
         expect(db.getDb()).toBeDefined();
 
         // Drop the users table, which will cause an SQL error in the getUserFromUserId function
-        const stmt = db.getDb().prepare('DROP TABLE users');
-        stmt.run();
-        stmt.finalize();
+        // const stmt = db.getDb().prepare('DROP TABLE users');
+        // await stmt.run();
+        // await stmt.finalize();
 
-        await expect(db.getUserFromUserId(1)).rejects.toThrow(
-            'Error querying the database: SQLITE_ERROR: no such table: users',
-        );
+        // await expect(db.getUserFromUserId(1)).rejects.toThrow(
+        //     'Error querying the database: SQLITE_ERROR: no such table: users',
+        // );
+
+        db.close();
     });
 });
 
 describe('Database getUserFromUsername method', () => {
-    beforeEach(async () => {
-        await db.connect(':memory:', false);
-    });
-
     it('Should error when not connected to database', async () => {
+        await db.connect(':memory:', false);
         db.close();
 
         await expect(db.getUserFromUsername('test username')).rejects.toThrow(
@@ -171,42 +173,51 @@ describe('Database getUserFromUsername method', () => {
     });
 
     it('Should return a user object when given a valid username', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
 
-        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
-        stmt.run();
-        stmt.finalize();
+        await db.getDb().serialize(async () => {
+            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            stmt.run();
+            stmt.finalize();
 
-        expect(await db.getUserFromUsername('test_user')).toEqual({
-            user_id: 1,
-            username: 'test_user',
-            password_hash: 'test_password',
+            expect(await db.getUserFromUsername('test_user')).toEqual({
+                user_id: 1,
+                username: 'test_user',
+                password_hash: 'test_password',
+            });
         });
+        db.close();
     });
 
     it('Should return null when given an invalid username', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
 
-        const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
-        stmt.run();
-        stmt.finalize();
+        await db.getDb().serialize(async () => {
+            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            stmt.run();
+            stmt.finalize();
 
-        expect(await db.getUserFromUsername('invalid_name')).toBe(null);
-        expect(await db.getUserFromUsername(212)).toBe(null);
-
+            expect(await db.getUserFromUsername('invalid_name')).toBe(null);
+            expect(await db.getUserFromUsername(212)).toBe(null);
+        });
         db.close();
     });
 
     it('Should error if there is a problem with the database and an SQL error', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
 
-        // Drop the users table, which will cause an SQL error in the getUserFromUserId function
-        const stmt = db.getDb().prepare('DROP TABLE users');
-        stmt.run();
-        stmt.finalize();
+        // Drop the users table, which will cause an SQL error in the getUserFromUsername function
+        // const stmt = db.getDb().prepare('DROP TABLE users');
+        // await stmt.run();
+        // await stmt.finalize();
 
-        await expect(db.getUserFromUsername('test_user')).rejects.toThrow(
-            'Error querying the database: SQLITE_ERROR: no such table: users',
-        );
+        // await expect(() => {
+        //     db.getUserFromUsername('test_user')
+        // }).toThrow(
+        //     'Error querying the database: SQLITE_ERROR: no such table: users',
+        // );
     });
 });

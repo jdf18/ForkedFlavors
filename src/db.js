@@ -116,16 +116,15 @@ async function getUserFromUsername(username) {
 
         db.get(query, [username], (err, row) => {
             if (err) {
-                reject(new Error(`Error querying the database: ${err.message}`));
-            } else if (!row) { // If no user is found, `row` will be null
-                resolve(null);
-            } else {
-                resolve({
-                    user_id: row.user_id,
-                    username: row.username,
-                    password_hash: row.password_hash,
-                }); // If no user is found, `row` will be null
+                return reject(new Error(`Error querying the database: ${err.message}`));
+            } if (!row) { // If no user is found, `row` will be null
+                return resolve(null);
             }
+            return resolve({
+                user_id: row.user_id,
+                username: row.username,
+                password_hash: row.password_hash,
+            }); // If no user is found, `row` will be null
         });
     });
 }
