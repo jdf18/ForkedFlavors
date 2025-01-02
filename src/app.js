@@ -59,6 +59,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../static/index.html'));
 });
 
+app.get('/account', (req, res) => {
+    res.sendFile(path.join(__dirname, '../static/account.html'));
+});
+
 // Other API Endpoints
 
 app.post('/api/login', async (req, res) => {
@@ -95,6 +99,39 @@ app.get('/api/is_logged_in', async (req, res) => {
         return res.status(200).json(true);
     }
     return res.status(200).json(false);
+});
+
+app.get('/api/profile/:username', async (req, res) => {
+    let user;
+    if (req.params.username === 'self') {
+        if (!req.session.user) return res.status(401).json({ message: 'Invalid username or password' });
+        user = await db.getUserFromUserId(req.session.user.user_id);
+    } else {
+        user = await db.getUserFromUsername(req.params.username);
+    }
+    console.log(user);
+
+    return res.status(200).json({
+        displayName: user.display_name,
+        bio: user.bio,
+        pfpLink: user.pfpLink,
+    });
+});
+
+app.post('/api/modify_profile', requireLogin, async (req, res) => {
+    console.log('/api/modify_profile');
+    const user = await db.getUserFromUserId(req.session.user.user_id);
+    const { displayName, bio } = req.body;
+
+    console.log(user.user_id, displayName, bio);
+
+    if (!displayName) {
+        return res.status(400).json({ message: 'Display name is missing' });
+    }
+
+    await db.modifyUser(user.user_id, displayName, bio);
+
+    return res.status(200).send('');
 });
 
 module.exports = app;

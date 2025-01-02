@@ -104,11 +104,8 @@ describe('Database initialization', () => {
 });
 
 describe('Database getUserFromUserId method', () => {
-    beforeEach(async () => {
-        await db.connect(':memory:', false);
-    });
-
     it('Should error when not connected to database', async () => {
+        await db.connect(':memory:', false);
         db.close();
 
         await expect(db.getUserFromUserId(1)).rejects.toThrow(
@@ -117,9 +114,12 @@ describe('Database getUserFromUserId method', () => {
     });
 
     it('Should return a user object when given a valid user id', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
         await db.getDb().serialize(async () => {
-            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            const stmt = db.getDb().prepare(
+                'INSERT INTO users VALUES (1, \'test_user\', \'display\', \'bio\',\'pfp\',\'test_password\')',
+            );
             stmt.run();
             stmt.finalize();
         });
@@ -127,15 +127,21 @@ describe('Database getUserFromUserId method', () => {
         expect(await db.getUserFromUserId(1)).toEqual({
             user_id: 1,
             username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
             password_hash: 'test_password',
         });
     });
 
     it('Should return null when given an invalid user id', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
 
         await db.getDb().serialize(async () => {
-            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            const stmt = db.getDb().prepare(
+                'INSERT INTO users VALUES (1, \'test_user\', \'display\', \'bio\',\'pfp\',\'test_password\')',
+            );
             stmt.run();
             stmt.finalize();
 
@@ -147,6 +153,7 @@ describe('Database getUserFromUserId method', () => {
     });
 
     it('Should error if there is a problem with the database and an SQL error', async () => {
+        await db.connect(':memory:', false);
         expect(db.getDb()).toBeDefined();
 
         // Drop the users table, which will cause an SQL error in the getUserFromUserId function
@@ -177,13 +184,18 @@ describe('Database getUserFromUsername method', () => {
         expect(db.getDb()).toBeDefined();
 
         await db.getDb().serialize(async () => {
-            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            const stmt = db.getDb().prepare(
+                'INSERT INTO users VALUES (1, \'test_user\', \'display\', \'bio\',\'pfp\',\'test_password\')',
+            );
             stmt.run();
             stmt.finalize();
 
             expect(await db.getUserFromUsername('test_user')).toEqual({
                 user_id: 1,
                 username: 'test_user',
+                display_name: 'display',
+                bio: 'bio',
+                pfp_link: 'pfp',
                 password_hash: 'test_password',
             });
         });
@@ -195,7 +207,9 @@ describe('Database getUserFromUsername method', () => {
         expect(db.getDb()).toBeDefined();
 
         await db.getDb().serialize(async () => {
-            const stmt = db.getDb().prepare('INSERT INTO users VALUES (1, \'test_user\', \'test_password\')');
+            const stmt = db.getDb().prepare(
+                'INSERT INTO users VALUES (1, \'test_user\', \'display\', \'bio\',\'pfp\',\'test_password\')',
+            );
             stmt.run();
             stmt.finalize();
 
@@ -219,5 +233,16 @@ describe('Database getUserFromUsername method', () => {
         // }).toThrow(
         //     'Error querying the database: SQLITE_ERROR: no such table: users',
         // );
+    });
+});
+
+describe('Database modifyUser method', () => {
+    it('Should error when not connected to database', async () => {
+        await db.connect(':memory:', false);
+        db.close();
+
+        await expect(db.modifyUser('test username', 'display_name', 'bio')).rejects.toThrow(
+            'Database not yet initialized. Call `connect() first.`',
+        );
     });
 });

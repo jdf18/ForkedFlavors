@@ -77,7 +77,9 @@ async function updateNavbar() {
         document.getElementById('logoutBtn').classList.remove('hidden');
 
         document.getElementById('nav-my-recipes').children[0].classList.remove('disabled');
+        document.getElementById('nav-my-recipes').children[0].href = '/recipes';
         document.getElementById('nav-my-account').children[0].classList.remove('disabled');
+        document.getElementById('nav-my-account').children[0].href = '/account';
     } else {
         const currentPath = window.location.pathname;
         if (currentPath !== '/') {
@@ -88,7 +90,9 @@ async function updateNavbar() {
         document.getElementById('logoutBtn').classList.add('hidden');
 
         document.getElementById('nav-my-recipes').children[0].classList.add('disabled');
+        document.getElementById('nav-my-recipes').children[0].href = '#';
         document.getElementById('nav-my-account').children[0].classList.add('disabled');
+        document.getElementById('nav-my-account').children[0].href = '#';
     }
 }
 
