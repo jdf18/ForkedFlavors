@@ -1,0 +1,8 @@
+
+button.login-btn:not(.hidden) {
+    display: block;
+}
+
+button.login-btn.hidden {
+    display: none;
+}

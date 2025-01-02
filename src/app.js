@@ -94,4 +94,11 @@ app.all('/api/logout', (req, res) => {
     });
 });
 
+app.get('/api/is_logged_in', async (req, res) => {
+    if (req.session.user) {
+        return res.status(200).json(true);
+    }
+    return res.status(200).json(false);
+});
+
 module.exports = app;
