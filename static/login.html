@@ -19,33 +19,7 @@
 <div id="message"></div>
 
 <script>
-	document.getElementById('loginForm').addEventListener('submit', async (e) => {
-		e.preventDefault(); // Prevent the default form submission
 
-		const username = document.getElementById('username').value;
-		const password = document.getElementById('password').value;
-
-		try {
-			const response = await fetch('/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username, password }),
-			});
-
-			const result = await response.json();
-
-			if (response.ok) {
-				document.getElementById('message').textContent = `Welcome, ${result.username}!`;
-			} else {
-				document.getElementById('message').textContent = `Error: ${result.message}`;
-			}
-		} catch (error) {
-			document.getElementById('message').textContent = 'Something went wrong. Please try again.';
-			console.error(error);
-		}
-	});
 </script>
 </body>
 </html>

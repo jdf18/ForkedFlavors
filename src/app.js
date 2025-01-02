@@ -65,7 +65,7 @@ app.get('/dashboard', requireLogin, (req, res) => {
 
 // Other API Endpoints
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -84,7 +84,7 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ message: 'Invalid username or password' });
 });
 
-app.all('/logout', (req, res) => {
+app.all('/api/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ message: 'Error logging out' });
