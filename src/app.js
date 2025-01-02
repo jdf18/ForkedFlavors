@@ -55,12 +55,8 @@ function logoutUser(res) {
 
 // Simple GET HTML API Endpoints
 
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../static/login.html'));
-});
-
-app.get('/dashboard', requireLogin, (req, res) => {
-    res.send(`Welcome, ${req.session.user.user_id}`);
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../static/index.html'));
 });
 
 // Other API Endpoints
@@ -84,7 +80,7 @@ app.post('/api/login', async (req, res) => {
     return res.status(401).json({ message: 'Invalid username or password' });
 });
 
-app.all('/api/logout', (req, res) => {
+app.all('/api/logout', requireLogin, (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ message: 'Error logging out' });
