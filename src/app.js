@@ -34,7 +34,7 @@ app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/d
 // Import database objects from ./db.js
 const db = require('./db');
 
-db.connect('./data/forkedflavors.db').then(() => {});
+const datastore = new db.Datastore('./data/');
 
 // Login system functions
 
@@ -65,14 +65,14 @@ app.get('/account', (req, res) => {
 
 // Other API Endpoints
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username or password is missing' });
     }
 
-    const user = await db.getUserFromUsername(username);
+    const user = datastore.getUserFromUsername(username);
     if (!user) { // If the username does not exist in the database
         return res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -94,22 +94,21 @@ app.all('/api/logout', requireLogin, (req, res) => {
     });
 });
 
-app.get('/api/is_logged_in', async (req, res) => {
+app.get('/api/is_logged_in', (req, res) => {
     if (req.session.user) {
         return res.status(200).json(true);
     }
     return res.status(200).json(false);
 });
 
-app.get('/api/profile/:username', async (req, res) => {
+app.get('/api/profile/:username', (req, res) => {
     let user;
     if (req.params.username === 'self') {
         if (!req.session.user) return res.status(401).json({ message: 'Invalid username or password' });
-        user = await db.getUserFromUserId(req.session.user.user_id);
+        user = datastore.getUserFromUserId(req.session.user.user_id);
     } else {
-        user = await db.getUserFromUsername(req.params.username);
+        user = datastore.getUserFromUsername(req.params.username);
     }
-    console.log(user);
 
     return res.status(200).json({
         displayName: user.display_name,
@@ -118,18 +117,15 @@ app.get('/api/profile/:username', async (req, res) => {
     });
 });
 
-app.post('/api/modify_profile', requireLogin, async (req, res) => {
-    console.log('/api/modify_profile');
-    const user = await db.getUserFromUserId(req.session.user.user_id);
+app.post('/api/modify_profile', requireLogin, (req, res) => {
+    const user = datastore.getUserFromUserId(req.session.user.user_id);
     const { displayName, bio } = req.body;
-
-    console.log(user.user_id, displayName, bio);
 
     if (!displayName) {
         return res.status(400).json({ message: 'Display name is missing' });
     }
 
-    await db.modifyUser(user.user_id, displayName, bio);
+    datastore.modifyUser(user.user_id, displayName, bio);
 
     return res.status(200).send('');
 });

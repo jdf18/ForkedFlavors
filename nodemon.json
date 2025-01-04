@@ -1,0 +1,5 @@
+{
+  "watch": ["src"],
+  "ext": "js",
+  "ignore": ["data", "test-data", "coverage", "node_modules", "static", "test"]
+}
