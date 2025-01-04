@@ -36,7 +36,7 @@ describe('Database initialization', () => {
     beforeEach(createTestDir);
     afterAll(cleanTestDir);
 
-    it('should fail to initialize the database from a non-existing directory', async () => {
+    it('Should fail to initialize the database from a non-existing directory', async () => {
         cleanTestDir();
 
         // Check that the database file does not exist
@@ -48,7 +48,7 @@ describe('Database initialization', () => {
         }).toThrow(`Database directory "${getCurrentTestDir()}" does not exist.`);
     });
 
-    it('should initialize the database from a existing empty directory', async () => {
+    it('Should initialize the database from a existing empty directory', async () => {
         // Check that the database directory exists
         expect(fs.existsSync(getCurrentTestDir())).toBe(true);
         // todo check directory is empty
@@ -60,7 +60,7 @@ describe('Database initialization', () => {
         datastore.close();
     });
 
-    it('should fail to close db object if not connected', () => {
+    it('Should fail to close db object if not connected', () => {
         const datastore = new db.Datastore(getCurrentTestDir());
         datastore.close();
         expect(() => {
@@ -220,5 +220,99 @@ describe('Database modifyUser method', () => {
         await expect(() => {
             datastore.modifyUser(1, 'display name', 'bio');
         }).toThrow('Database not initialized.');
+    });
+
+    it('Should update the users details in the datastore', async () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.users = [{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'incorrect_display',
+            bio: 'incorrect_bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }];
+
+        expect(datastore.modifyUser(1, 'display', 'bio')).toBe(true);
+
+        expect(datastore.users).toStrictEqual([{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.users).toStrictEqual([{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }]);
+    });
+
+    it('Should work with getUserFromUserId method', async () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.users = [{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'incorrect_display',
+            bio: 'incorrect_bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }];
+
+        expect(datastore.modifyUser(1, 'display', 'bio')).toBe(true);
+
+        // Check cache is updated
+        expect(datastore.getUserFromUserId(1)).toEqual({
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        });
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.getUserFromUserId(1)).toEqual({
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        });
+    });
+
+    it('Should throw an error when given an invalid user id', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.users = [{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'incorrect_display',
+            bio: 'incorrect_bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }];
+
+        expect(datastore.modifyUser(2, 'display', 'bio')).toBe(false);
+
+        datastore.close();
     });
 });

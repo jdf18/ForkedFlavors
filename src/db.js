@@ -87,11 +87,7 @@ class Datastore {
         }
 
         const index = this.users.findIndex((user) => user.user_id === userId);
-
-        if (index === undefined) {
-            return false;
-        }
-        if (this.users[index] === undefined) return false;
+        if (index === -1) return false;
 
         this.users[index].display_name = displayName;
         this.users[index].bio = bio;
