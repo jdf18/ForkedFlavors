@@ -5,6 +5,18 @@ const db = require('../src/db');
 
 const TEST_DB_DIR = path.join(__dirname, '../test-data/');
 
+beforeAll(() => {
+    if (!fs.existsSync(TEST_DB_DIR)) {
+        fs.mkdirSync(TEST_DB_DIR);
+    }
+});
+
+afterAll(() => {
+    if (fs.existsSync(TEST_DB_DIR)) {
+        fs.rmSync(TEST_DB_DIR, { recursive: true, force: true });
+    }
+});
+
 function getCurrentTestDir() {
     const state = expect.getState();
     const testName = state.currentTestName || 'unknown';
