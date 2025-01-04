@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
   "ext": "js",
-  "ignore": ["data", "coverage", "node_modules", "static", "test"]
+  "ignore": ["data", "test-data", "coverage", "node_modules", "static", "test"]
 }
