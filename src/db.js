@@ -1,15 +1,28 @@
 const fs = require('fs');
 
+function returnUserFromRow(user) {
+    return {
+        user_id: user.user_id,
+        username: user.username,
+        display_name: user.display_name,
+        bio: user.bio,
+        pfp_link: user.pfp_link,
+        password_hash: user.password_hash,
+    };
+}
+
 class Datastore {
     constructor(path) {
         if (!fs.existsSync(path)) {
-            console.log('Error: datastore constructed with a non-existant path.');
+            throw new Error(`Database file "${path}" does not exist.`);
         }
         this.path = path;
 
         this.users = null;
         this.recipes = null;
         this.comments = null;
+
+        this.initialised = false;
 
         this.init_datastore();
     }
@@ -27,6 +40,7 @@ class Datastore {
             console.log('Error: datastore users.json does not exist.');
         }
         this.load();
+        this.initialised = true;
     }
 
     save() {
@@ -41,100 +55,56 @@ class Datastore {
     }
 
     close() {
+        if (!this.initialised) return;
+
         this.save();
+        this.initialised = false;
         delete this;
     }
-}
 
-let datastore;
-
-// Try to connect to the database file
-function connect(databasePath) {
-    // Check that the file exists
-    if (!(fs.existsSync(databasePath) || databasePath === ':memory:')) {
-        return new Promise((resolve, reject) => {
-            reject(new Error(`Database file "${databasePath}" does not exist.`));
-        });
+    getUserFromUserId(userId) {
+        if (!this.initialised) {
+            throw new Error('Database not yet initialized. Call `connect() first.`');
+        }
+        const index = this.users.findIndex((user) => user.user_id === userId);
+        if (index === undefined) {
+            return null;
+        }
+        return returnUserFromRow(this.users[index]);
     }
 
-    datastore = new Datastore(databasePath);
+    getUserFromUsername(username) {
+        if (!this.initialised) {
+            throw new Error('Database not yet initialized. Call `connect() first.`');
+        }
 
-    return true;
-}
-
-function getDb() {
-    if (!datastore) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
-    }
-    return datastore;
-}
-
-function close() {
-    if (!datastore) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
-    }
-    datastore.close();
-    datastore = undefined;
-}
-
-function returnUserFromRow(user) {
-    return {
-        user_id: user.user_id,
-        username: user.username,
-        display_name: user.display_name,
-        bio: user.bio,
-        pfp_link: user.pfp_link,
-        password_hash: user.password_hash,
-    };
-}
-
-function getUserFromUserId(userId) {
-    if (!datastore) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
-    }
-    const index = datastore.users.findIndex((user) => user.user_id === userId);
-    if (index === undefined) {
-        return null;
-    }
-    return returnUserFromRow(datastore.users[index]);
-}
-
-function getUserFromUsername(username) {
-    if (!datastore) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
+        const index = this.users.findIndex((user) => user.username === username);
+        if (index === undefined) {
+            return null;
+        }
+        return returnUserFromRow(this.users[index]);
     }
 
-    const index = datastore.users.findIndex((user) => user.username === username);
-    if (index === undefined) {
-        return null;
+    modifyUser(userId, displayName, bio) {
+        if (!this.initialised) {
+            throw new Error('Database not yet initialized. Call `connect() first.`');
+        }
+
+        const index = this.users.findIndex((user) => user.user_id === userId);
+
+        if (index === undefined) {
+            return false;
+        }
+
+        this.users[index].display_name = displayName;
+        this.users[index].bio = bio;
+
+        this.save();
+
+        return true;
     }
-    return returnUserFromRow(datastore.users[index]);
-}
-
-function modifyUser(userId, displayName, bio) {
-    if (!datastore) {
-        throw new Error('Database not yet initialized. Call `connect() first.`');
-    }
-
-    const index = datastore.users.findIndex((user) => user.user_id === userId);
-
-    if (index === undefined) {
-        return false;
-    }
-
-    datastore.users[index].display_name = displayName;
-    datastore.users[index].bio = bio;
-
-    datastore.save();
-
-    return true;
 }
 
 module.exports = {
-    connect,
-    getDb,
-    close,
-    getUserFromUserId,
-    getUserFromUsername,
-    modifyUser,
+    Datastore,
 };

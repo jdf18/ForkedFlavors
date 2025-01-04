@@ -34,7 +34,7 @@ app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/d
 // Import database objects from ./db.js
 const db = require('./db');
 
-db.connect('./data/');
+const datastore = new db.Datastore('./data/');
 
 // Login system functions
 
@@ -72,7 +72,7 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ message: 'Username or password is missing' });
     }
 
-    const user = db.getUserFromUsername(username);
+    const user = datastore.getUserFromUsername(username);
     if (!user) { // If the username does not exist in the database
         return res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -105,11 +105,10 @@ app.get('/api/profile/:username', (req, res) => {
     let user;
     if (req.params.username === 'self') {
         if (!req.session.user) return res.status(401).json({ message: 'Invalid username or password' });
-        user = db.getUserFromUserId(req.session.user.user_id);
+        user = datastore.getUserFromUserId(req.session.user.user_id);
     } else {
-        user = db.getUserFromUsername(req.params.username);
+        user = datastore.getUserFromUsername(req.params.username);
     }
-    console.log(user);
 
     return res.status(200).json({
         displayName: user.display_name,
@@ -119,17 +118,14 @@ app.get('/api/profile/:username', (req, res) => {
 });
 
 app.post('/api/modify_profile', requireLogin, (req, res) => {
-    console.log('/api/modify_profile');
-    const user = db.getUserFromUserId(req.session.user.user_id);
+    const user = datastore.getUserFromUserId(req.session.user.user_id);
     const { displayName, bio } = req.body;
-
-    console.log(user.user_id, displayName, bio);
 
     if (!displayName) {
         return res.status(400).json({ message: 'Display name is missing' });
     }
 
-    db.modifyUser(user.user_id, displayName, bio);
+    datastore.modifyUser(user.user_id, displayName, bio);
 
     return res.status(200).send('');
 });
