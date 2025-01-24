@@ -6,25 +6,25 @@ function forkRecipe() {
     createNewRecipe();
 }
 
-function getRecipe() {
+function getBakeImages() {
 
 }
 
-function logBake() {
-
+function getRecipe() {
+    getBakeImages();
 }
 
 function addBakeImage() {
 
 }
 
-function getBakeImages() {
-
+function logBake() {
+    addBakeImage();
 }
 
 module.exports = {
     createNewRecipe,
     forkRecipe,
     getRecipe,
-    logBake
-}
+    logBake,
+};
