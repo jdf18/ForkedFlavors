@@ -122,13 +122,25 @@ apiRouter.get('/is_logged_in', (req, res) => {
 // * ===== Profile Endpoints =====
 
 apiRouter.post('/create_account', (req, res) => {
-    // todo
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username or password is missing' });
+    }
+
+    const user = datastore.getUserFromUsername(username);
+    if (user) { // If the username does not exist in the database
+        return res.status(400).json({ message: 'Username has already been taken' });
+    }
+
+    datastore.createUser(username, password);
     return res.status(501); // Not implemented yet
 });
 
 apiRouter.delete('/profile', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(req.session.user.user_id);
-    // todo
+
+    datastore.deleteUser(user.username);
     return res.status(501); // Not implemented yet
 });
 

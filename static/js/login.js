@@ -69,6 +69,36 @@ async function apiLogout() {
     }
 }
 
+async function apiSignup(username, password) {
+    try {
+        const response = await fetch('/api/create_account', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log(`Welcome, ${result.username}!`);
+        } else {
+            console.log(`Error: ${result.message}`);
+        }
+    } catch (error) {
+        console.log('Something went wrong. Please try again.');
+        console.error(error);
+    }
+}
+
+function openSignup() {
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
+    loginModal.hide();
+    signupModal.show();
+}
+
 async function updateNavbar() {
     const isLoggedIn = await apiIsLoggedIn();
 
@@ -99,7 +129,8 @@ async function updateNavbar() {
 document.addEventListener('DOMContentLoaded', async () => {
     await updateNavbar();
 
-    const loginModal = new bootstrap.Modal(document.getElementById('myModal'));
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
 
     document.getElementById('loginBtn').addEventListener('click', () => {
         loginModal.show();
@@ -119,6 +150,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         await apiLogin(username, password);
 
+        loginModal.hide();
+        await updateNavbar();
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent the default form submission
+
+        const username = document.getElementById('signup-username').value;
+        const password = document.getElementById('signup-password').value;
+
+        await apiSignup(username, password);
+        await apiLogin(username, password);
+        signupModal.hide();
         loginModal.hide();
         await updateNavbar();
     });

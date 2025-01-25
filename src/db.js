@@ -96,6 +96,37 @@ class Datastore {
 
         return true;
     }
+
+    createUser(username, password) {
+        if (!this.initialised) {
+            throw new Error('Database not initialized.');
+        }
+
+        const newUserID = 10; // todo: track user id allocation
+        this.users.push({
+            user_id: newUserID,
+            username,
+            display_name: username,
+            bio: '',
+            pfp_link: null,
+            password_hash: password,
+        });
+
+        this.save();
+
+        return true;
+    }
+
+    deleteUser(username) {
+        if (!this.initialised) {
+            throw new Error('Database not initialized.');
+        }
+
+        this.users = this.users.filter((item) => !(item.username === username));
+
+        this.save();
+        return true;
+    }
 }
 
 module.exports = {

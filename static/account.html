@@ -90,6 +90,24 @@
         </div>
     </div>
 
+    <!-- Delete account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete your account? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelDeleteAccount">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAccount">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <main>
         <div class="container my-5">
             <div class="row justify-content-center">
@@ -102,6 +120,7 @@
 
                             <div class="mt-4">
                                 <a href="#" class="btn btn-primary" id="edit-profile-btn">Edit Profile</a>
+                                <a href="#" class="btn btn-danger" id="delete-account-btn">Delete Account</a>
                             </div>
                         </div>
                     </div>

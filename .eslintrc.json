@@ -16,6 +16,7 @@
     "rules": {
         "no-console": "off",
         "indent": ["error", 4],
+        "no-unused-vars": "off",
         "jest/no-disabled-tests": "warn",
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",

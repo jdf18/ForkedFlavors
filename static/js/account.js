@@ -61,10 +61,33 @@ async function updatePageProfile() {
     }
 }
 
+async function deleteAccount() {
+    try {
+        const response = await fetch('/api/profile', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('Account deleted');
+        } else {
+            console.log(`Error: ${result.message}`);
+        }
+    } catch (error) {
+        console.log('Something went wrong. Please try again.');
+        console.error(error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await updatePageProfile();
 
     const accountModal = new bootstrap.Modal(document.getElementById('accountModal'));
+    const deleteAccountModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
 
     document.getElementById('edit-profile-btn').addEventListener('click', () => {
         apiGetProfile('self').then((profile) => {
@@ -72,6 +95,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('account-form-bio').value = profile.bio;
         });
         accountModal.show();
+    });
+
+    document.getElementById('delete-account-btn').addEventListener('click', () => {
+        deleteAccountModal.show();
     });
 
     document.getElementById('account-form-submit-btn').addEventListener('click', async (e) => {
@@ -84,5 +111,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         accountModal.hide();
         await updatePageProfile();
+    });
+
+    document.getElementById('cancelDeleteAccount').addEventListener('click', () => {
+        deleteAccountModal.hide();
+        // todo: logout + redirect to index
+    });
+
+    document.getElementById('confirmDeleteAccount').addEventListener('click', () => {
+        deleteAccount();
+        // todo: logout + redirect to index
     });
 });
