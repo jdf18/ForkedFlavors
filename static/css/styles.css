@@ -6,3 +6,13 @@ button.login-btn:not(.hidden) {
 button.login-btn.hidden {
     display: none;
 }
+
+.modal#loginModal form#loginForm span {
+    color: grey;
+    font-size: 0.7em;
+}
+
+.modal#signupModal form#signupForm span {
+    color: grey;
+    font-size: 0.7em;
+}
