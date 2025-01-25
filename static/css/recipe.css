@@ -1,0 +1,36 @@
+.recipe-header {
+    position: relative;
+    background-image: url('/img/header-background.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-position: center;
+    height: 300px; /* Adjust height as needed */
+    color: white;
+}
+
+.recipe-header-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5); /* Adds a dark overlay */
+}
+
+.recipe-header-content {
+    position: relative;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ingredients, .method {
+    margin-bottom: 20px;
+}
+
+.method .active-step {
+    background-color: lightsalmon;
+    border-color: salmon;
+}
+
+.recipe-bakes .image-cards .card {
+    margin-bottom: 20px;
+}
