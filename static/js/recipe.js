@@ -78,17 +78,49 @@ async function apiEditRecipe(data) {
 }
 
 async function loadRecipeData() {
-    const recipeData = apiGetRecipe();
+    const recipeData = await apiGetRecipe();
 
     const title = document.getElementById('EditableRecipeTitle');
     title.innerText = recipeData.title;
 
-    // todo: create HTML for ingredients and methods and load
 
-    // todo: grab the user icon and name
+    const ingredientsList = document.getElementById(`ingredients-list`);
+    if (!ingredientsList) {
+        console.error(`Idk it broke and it should not have`);
+        return;
+    }
+
+    ingredientsList.innerHTML = '';
+
+    recipeData.ingredients.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        li.className = 'list-group-item editable';
+        li.setAttribute('contenteditable', 'false');
+        li.id = `EditableIngredient${index + 1}`;
+        ingredientsList.appendChild(li);
+    })
+
+
+    const methodList = document.getElementById(`method-list`);
+    if (!methodList) {
+        console.error(`Idk it broke and it should not have`);
+        return;
+    }
+
+    methodList.innerHTML = '';
+
+    recipeData.method.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        li.className = 'list-group-item editable';
+        li.setAttribute('contenteditable', 'false');
+        li.id = `EditableMethod${index + 1}`;
+        methodList.appendChild(li);
+    })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const methodSteps = document.querySelectorAll('.method li.list-group-item');
 
     methodSteps.forEach((methodStep) => {
@@ -112,13 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.getElementById('saveButton');
     const cancelButton = document.getElementById('cancelButton');
 
-    const editableElements = document.querySelectorAll('.editable');
     const editButtonGroup = document.getElementById('contentEditButtons');
 
     let originalValues = {};
 
     // Enable edit mode
     editButton.addEventListener('click', (e) => {
+        const editableElements = document.querySelectorAll('.editable');
         originalValues = {};
         editableElements.forEach((el) => {
             originalValues[el.id] = el.innerHTML;
@@ -132,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cancel edit mode
     cancelButton.addEventListener('click', (e) => {
+        const editableElements = document.querySelectorAll('.editable');
         editableElements.forEach((el) => {
             el.innerHTML = originalValues[el.id];
             el.contentEditable = 'false';
@@ -144,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save Changes
     saveButton.addEventListener('click', async (e) => {
+        const editableElements = document.querySelectorAll('.editable');
         const updatedData = {};
         editableElements.forEach((el) => {
             updatedData[el.id] = el.innerHTML;
@@ -156,4 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         await apiEditRecipe(updatedData);
     });
+
+    await loadRecipeData();
 });

@@ -190,7 +190,9 @@ apiRouter.post('/modify_profile', requireLogin, (req, res) => {
 
 // * ===== Recipe Endpoints =====
 
-apiRouter.get('/recipe/:recipeId', requireLogin, (req, res) => res.status(200).json(recipes.getRecipe(datastore, Number(req.params.recipeId))));
+apiRouter.get('/recipe/:recipeId', requireLogin, (req, res) => res.status(200).json(
+    recipes.getRecipe(datastore, Number(req.params.recipeId))
+));
 
 apiRouter.post('/new_recipe', requireLogin, (req, res) => {
     const recipeId = recipes.createNewRecipe(datastore, req.session.user.user_id);
