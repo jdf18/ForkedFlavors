@@ -1,6 +1,19 @@
-async function apiGetRecipe() {
+function getRecipeId() {
     const url = window.location.href;
-    const recipeId = Number(url.substring(url.lastIndexOf('/') + 1));
+    const numStr = url.substring(url.lastIndexOf('/') + 1);
+    let recipeId = 0;
+    for (let i = 0; i < numStr.length; i++) {
+        if (numStr[i] < '0' || numStr[i] > '9') {
+            break;
+        }
+        recipeId *= 10;
+        recipeId += Number(numStr[i]);
+    }
+    return recipeId;
+}
+
+async function apiGetRecipe() {
+    const recipeId = getRecipeId();
 
     try {
         const response = await fetch(`/api/recipe/${recipeId}`, {
@@ -48,8 +61,7 @@ async function apiCreateRecipe() {
 }
 
 async function apiEditRecipe(data) {
-    const url = window.location.href;
-    const recipeId = Number(url.substring(url.lastIndexOf('/') + 1));
+    const recipeId = getRecipeId();
 
     try {
         const response = await fetch('/api/edit_recipe', {
@@ -77,16 +89,26 @@ async function apiEditRecipe(data) {
     return null;
 }
 
+function setupMethodStepHighlights() {
+    const methodSteps = document.querySelectorAll('.method li.list-group-item');
+
+    methodSteps.forEach((methodStep) => {
+        methodStep.addEventListener('click', (e) => {
+            methodSteps.forEach((step) => step.classList.remove('active-step'));
+            methodStep.classList.add('active-step');
+        });
+    });
+}
+
 async function loadRecipeData() {
     const recipeData = await apiGetRecipe();
 
     const title = document.getElementById('EditableRecipeTitle');
     title.innerText = recipeData.title;
 
-
-    const ingredientsList = document.getElementById(`ingredients-list`);
+    const ingredientsList = document.getElementById('ingredients-list');
     if (!ingredientsList) {
-        console.error(`Idk it broke and it should not have`);
+        console.error('Idk it broke and it should not have');
         return;
     }
 
@@ -99,12 +121,11 @@ async function loadRecipeData() {
         li.setAttribute('contenteditable', 'false');
         li.id = `EditableIngredient${index + 1}`;
         ingredientsList.appendChild(li);
-    })
+    });
 
-
-    const methodList = document.getElementById(`method-list`);
+    const methodList = document.getElementById('method-list');
     if (!methodList) {
-        console.error(`Idk it broke and it should not have`);
+        console.error('Idk it broke and it should not have');
         return;
     }
 
@@ -117,19 +138,12 @@ async function loadRecipeData() {
         li.setAttribute('contenteditable', 'false');
         li.id = `EditableMethod${index + 1}`;
         methodList.appendChild(li);
-    })
+    });
+
+    setupMethodStepHighlights();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const methodSteps = document.querySelectorAll('.method li.list-group-item');
-
-    methodSteps.forEach((methodStep) => {
-        methodStep.addEventListener('click', (e) => {
-            methodSteps.forEach((step) => step.classList.remove('active-step'));
-            methodStep.classList.add('active-step');
-        });
-    });
-
     const createNewButton = document.getElementById('create-new-btn');
 
     createNewButton.addEventListener('click', async (e) => {
@@ -143,8 +157,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const editButton = document.getElementById('editButton');
     const saveButton = document.getElementById('saveButton');
     const cancelButton = document.getElementById('cancelButton');
+    const cancelButton2 = document.getElementById('cancelButton2');
 
     const editButtonGroup = document.getElementById('contentEditButtons');
+
+    const addIngredientBtn = document.getElementById('add-ingredient-btn');
+    const addMethodStepBtn = document.getElementById('add-step-btn');
 
     let originalValues = {};
 
@@ -158,6 +176,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.classList.add('border');
         });
 
+        const editingElements = document.querySelectorAll('.editing');
+        editingElements.forEach((el) => {
+            el.classList.remove('d-none');
+        });
+
         editButton.classList.add('d-none');
         editButtonGroup.classList.remove('d-none');
     });
@@ -169,6 +192,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.innerHTML = originalValues[el.id];
             el.contentEditable = 'false';
             el.classList.remove('border');
+        });
+
+        const editingElements = document.querySelectorAll('.editing');
+        editingElements.forEach((el) => {
+            el.classList.add('d-none');
+        });
+
+        editButtonGroup.classList.add('d-none');
+        editButton.classList.remove('d-none');
+    });
+
+    cancelButton2.addEventListener('click', (e) => {
+        const editableElements = document.querySelectorAll('.editable');
+        editableElements.forEach((el) => {
+            el.innerHTML = originalValues[el.id];
+            el.contentEditable = 'false';
+            el.classList.remove('border');
+        });
+
+        const editingElements = document.querySelectorAll('.editing');
+        editingElements.forEach((el) => {
+            el.classList.add('d-none');
         });
 
         editButtonGroup.classList.add('d-none');
@@ -185,10 +230,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             el.classList.remove('border');
         });
 
+        const editingElements = document.querySelectorAll('.editing');
+        editingElements.forEach((el) => {
+            el.classList.add('d-none');
+        });
+
         editButtonGroup.classList.add('d-none');
         editButton.classList.remove('d-none');
 
         await apiEditRecipe(updatedData);
+    });
+
+    addIngredientBtn.addEventListener('click', () => {
+        const ingredientsList = document.getElementById('ingredients-list');
+        if (!ingredientsList) {
+            console.error('Idk it broke and it should not have');
+            return;
+        }
+
+        const li = document.createElement('li');
+        li.textContent = '';
+        li.className = 'list-group-item editable border';
+        li.setAttribute('contenteditable', 'true');
+        li.id = `EditableIngredient${ingredientsList.childNodes.length + 1}`;
+        ingredientsList.appendChild(li);
+    });
+
+    addMethodStepBtn.addEventListener('click', () => {
+        const methodList = document.getElementById('method-list');
+        if (!methodList) {
+            console.error('Idk it broke and it should not have');
+            return;
+        }
+
+        const li = document.createElement('li');
+        li.textContent = '<br>';
+        li.className = 'list-group-item editable border';
+        li.setAttribute('contenteditable', 'true');
+        li.id = `EditableMethod${methodList.childNodes.length + 1}`;
+        methodList.appendChild(li);
     });
 
     await loadRecipeData();
