@@ -1,5 +1,91 @@
-function editRecipe(data) {
+async function apiGetRecipe() {
+    const url = window.location.href;
+    const recipeId = Number(url.substring(url.lastIndexOf('/') + 1));
 
+    try {
+        const response = await fetch(`/api/recipe/${recipeId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            return result;
+        }
+        console.log(`Error: ${result.message}`);
+        return null;
+    } catch (error) {
+        console.log('Something went wrong. Please try again.');
+        console.error(error);
+    }
+    return null;
+}
+
+async function apiCreateRecipe() {
+    try {
+        const response = await fetch('/api/new_recipe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('Recipe created');
+            return result;
+        }
+        console.log(`Error: ${result.message}`);
+    } catch (error) {
+        console.log('Something went wrong. Please try again.');
+        console.error(error);
+    }
+    return null;
+}
+
+async function apiEditRecipe(data) {
+    const url = window.location.href;
+    const recipeId = Number(url.substring(url.lastIndexOf('/') + 1));
+
+    try {
+        const response = await fetch('/api/edit_recipe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                recipeId,
+                updatedContent: data,
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('Recipe edited');
+            return result;
+        }
+        console.log(`Error: ${result.message}`);
+    } catch (error) {
+        console.log('Something went wrong. Please try again.');
+        console.error(error);
+    }
+    return null;
+}
+
+async function loadRecipeData() {
+    const recipeData = apiGetRecipe();
+
+    const title = document.getElementById('EditableRecipeTitle');
+    title.innerText = recipeData.title;
+
+    // todo: create HTML for ingredients and methods and load
+
+    // todo: grab the user icon and name
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
             methodSteps.forEach((step) => step.classList.remove('active-step'));
             methodStep.classList.add('active-step');
         });
+    });
+
+    const createNewButton = document.getElementById('create-new-btn');
+
+    createNewButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const recipeId = await apiCreateRecipe();
+
+        window.location.href = `/recipe/${recipeId}`;
     });
 
     const editButton = document.getElementById('editButton');
@@ -47,17 +143,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Save Changes
-    saveButton.addEventListener('click', (e) => {
+    saveButton.addEventListener('click', async (e) => {
         const updatedData = {};
         editableElements.forEach((el) => {
-            updatedData[el.id] = el.value;
+            updatedData[el.id] = el.innerHTML;
             el.contentEditable = 'false';
             el.classList.remove('border');
         });
 
-        editRecipe(updatedData);
-
         editButtonGroup.classList.add('d-none');
         editButton.classList.remove('d-none');
+
+        await apiEditRecipe(updatedData);
     });
 });

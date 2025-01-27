@@ -4,7 +4,13 @@ require('dotenv').config();
 // Require path module for path manipulations
 const path = require('path');
 
-// Create an express app
+// * Import helper js scripts
+const db = require('./db');
+const recipes = require('./recipe');
+
+const datastore = new db.Datastore('./data/');
+
+// * Express configuration
 const express = require('express');
 
 const app = express();
@@ -30,15 +36,24 @@ app.use(
 // Configure app to use json for http messages
 app.use(express.json());
 
+const apiLog = (req, res, next) => {
+    const d = new Date(); // get current datetime
+    const time = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+
+    const { method } = req;
+    const endpoint = req.originalUrl;
+
+    next();
+
+    const delta = new Date((new Date()).getTime() - d.getTime());
+    console.log(`${time} ${method} ${endpoint} ${res.statusCode} (${delta.getTime()}ms)`);
+};
+
+htmlRouter.use(apiLog);
+
 // Set static routes
 app.use(express.static('static'));
 app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/dist'));
-
-// * Import helper js scripts
-const db = require('./db');
-const recipes = require('./recipe');
-
-const datastore = new db.Datastore('./data/');
 
 // * Login system functions
 
@@ -59,25 +74,14 @@ function logoutUser(res) {
 
 // * ========== HTML GET Endpoints ==========
 
-htmlRouter.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../static/index.html'));
-});
+htmlRouter.get('/', (req, res) => res.sendFile(path.join(__dirname, '../static/index.html')));
 
-htmlRouter.get('/account', requireLogin, (req, res) => {
-    res.sendFile(path.join(__dirname, '../static/account.html'));
-});
+htmlRouter.get('/account', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/account.html')));
 
-htmlRouter.get('/recipe', requireLogin, (req, res) => {
-    res.sendFile(path.join(__dirname, '../static/recipe.html'));
-});
+htmlRouter.get('/recipe', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipe.html')));
+htmlRouter.get('/recipe/:_', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipe.html')));
 
 // * ========== API Endpoints ==========
-
-const apiLog = (req, res, next) => {
-    const d = new Date(); // get current datetime
-    console.log(`Time: ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`, req.originalUrl);
-    next();
-};
 
 apiRouter.use(apiLog);
 
@@ -186,22 +190,33 @@ apiRouter.post('/modify_profile', requireLogin, (req, res) => {
 
 // * ===== Recipe Endpoints =====
 
+apiRouter.get('/recipe/:recipeId', requireLogin, (req, res) => res.status(200).json(recipes.getRecipe(datastore, Number(req.params.recipeId))));
+
 apiRouter.post('/new_recipe', requireLogin, (req, res) => {
-    // todo
-    recipes.createNewRecipe();
-    return res.status(501); // Not implemented yet
+    const recipeId = recipes.createNewRecipe(datastore, req.session.user.user_id);
+
+    return res.json(recipeId);
 });
 
 apiRouter.post('/fork_recipe', requireLogin, (req, res) => {
-    // todo
-    recipes.forkRecipe();
-    return res.status(501); // Not implemented yet
+    const { forkRecipeId } = req.body;
+    const recipeId = recipes.forkRecipe(datastore, req.session.user.user_id, forkRecipeId);
+
+    return res.json(recipeId); // Not implemented yet
 });
 
 apiRouter.post('/log_bake', requireLogin, (req, res) => {
     // todo
     recipes.logBake();
     return res.status(501); // Not implemented yet
+});
+
+apiRouter.post('/edit_recipe', requireLogin, (req, res) => {
+    const { recipeId, updatedContent } = req.body;
+
+    recipes.editRecipe(datastore, recipeId, updatedContent);
+
+    return res.status(200);
 });
 
 app.use('/', htmlRouter);
