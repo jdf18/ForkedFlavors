@@ -11,6 +11,38 @@ function returnUserFromRow(user) {
     };
 }
 
+function sanitizeHtml(text) {
+    console.log(text);
+
+    text = text.replaceAll('<div>', '');
+    text = text.replaceAll('<br>', '');
+    text = text.replaceAll('</div>', '');
+    text = text.replaceAll('<strong>', '');
+    text = text.replaceAll('</strong>', '');
+
+    let scope = 0;
+    let insideTag = false;
+
+    let out = '';
+
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] === '<') {
+            scope += 1;
+            insideTag = true;
+            i++;
+            if (text[i] === '/') {
+                scope -= 2;
+            }
+        } else if (text[i] === '>') {
+            insideTag = false;
+        } else if (scope === 0 && (!insideTag)) {
+            out += text[i];
+        }
+    }
+
+    return out;
+}
+
 class Datastore {
     constructor(path) {
         if (!fs.existsSync(path)) {
@@ -217,11 +249,15 @@ class Datastore {
         const index = this.recipes.findIndex((recipe) => recipe.recipe_id === recipeId);
         if (index === -1) return false;
 
-        this.recipes[index].title = title;
-        this.recipes[index].ingredients = ingredients;
-        this.recipes[index].method = method;
+        console.log(this.recipes[index]);
+
+        this.recipes[index].title = sanitizeHtml(title);
+        this.recipes[index].ingredients = ingredients.map(sanitizeHtml);
+        this.recipes[index].method = method.map(sanitizeHtml);
 
         this.save();
+
+        console.log(this.recipes[index]);
 
         return true;
     }

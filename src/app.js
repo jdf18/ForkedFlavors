@@ -49,11 +49,16 @@ const apiLog = (req, res, next) => {
     console.log(`${time} ${method} ${endpoint} ${res.statusCode} (${delta.getTime()}ms)`);
 };
 
-htmlRouter.use(apiLog);
+app.use(apiLog);
 
 // Set static routes
 app.use(express.static('static'));
 app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/dist'));
+
+function sanitizeInput(input) {
+    // Remove all HTML tags using a regular expression
+    return input.replace(/<\/?[^>]+(>|$)/g, '');
+}
 
 // * Login system functions
 
@@ -83,7 +88,7 @@ htmlRouter.get('/recipe/:_', requireLogin, (req, res) => res.sendFile(path.join(
 
 // * ========== API Endpoints ==========
 
-apiRouter.use(apiLog);
+// apiRouter.use(apiLog);
 
 // * ===== Login API Endpoints =====
 
