@@ -12,8 +12,6 @@ function returnUserFromRow(user) {
 }
 
 function sanitizeHtml(text) {
-    console.log(text);
-
     text = text.replaceAll('<div>', '');
     text = text.replaceAll('<br>', '');
     text = text.replaceAll('</div>', '');
@@ -237,11 +235,12 @@ class Datastore {
             title: this.recipes[index].title,
             ingredients: this.recipes[index].ingredients,
             method: this.recipes[index].method,
+            image: (this.recipes[index].photo === null) ? `/img/header-background.jpg` : this.recipes[index].photo,
             user: this.recipes[index].owner_id,
         };
     }
 
-    editRecipe(recipeId, title, ingredients, method) {
+    editRecipe(recipeId, title, ingredients, method, photo) {
         if (!this.initialised) {
             throw new Error('Database not initialized.');
         }
@@ -249,15 +248,12 @@ class Datastore {
         const index = this.recipes.findIndex((recipe) => recipe.recipe_id === recipeId);
         if (index === -1) return false;
 
-        console.log(this.recipes[index]);
-
         this.recipes[index].title = sanitizeHtml(title);
         this.recipes[index].ingredients = ingredients.map(sanitizeHtml);
         this.recipes[index].method = method.map(sanitizeHtml);
+        this.recipes[index].photo = (sanitizeHtml(photo) === `/img/header-background.jpg`) ? null : sanitizeHtml(photo);
 
         this.save();
-
-        console.log(this.recipes[index]);
 
         return true;
     }

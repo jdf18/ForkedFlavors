@@ -16,14 +16,13 @@ function forkRecipe(datastore, userId, forkId) {
 
 function editRecipe(datastore, recipeId, newContent) {
     const title = newContent.EditableRecipeTitle;
+    const photo = newContent.EditablePhotoUrl
 
     const ingredients = [];
     const method = [];
 
     // ! Not actually checking the order here and instead going off of order defined in object
     // todo: make this actaully robust
-    // ! Not checking html submitted. Especially for script tags. This should be plain text only
-    // todo: Fix this ^
     for (const [key, value] of Object.entries(newContent)) {
         if (key.includes('Ingredient')) {
             ingredients.push(value);
@@ -32,7 +31,7 @@ function editRecipe(datastore, recipeId, newContent) {
         }
     }
 
-    datastore.editRecipe(recipeId, title, ingredients, method);
+    datastore.editRecipe(recipeId, title, ingredients, method, photo);
 }
 
 function getBakeImages() {

@@ -103,8 +103,15 @@ function setupMethodStepHighlights() {
 async function loadRecipeData() {
     const recipeData = await apiGetRecipe();
 
+    const recipeHeader = document.querySelector('.recipe-header');
+    const imageUrl = ((recipeData.image === null) ? '/img/header-background.jpg' : recipeData.image)
+    recipeHeader.style.backgroundImage = `url(${imageUrl})`
+
     const title = document.getElementById('EditableRecipeTitle');
     title.innerText = recipeData.title;
+
+    const photo = document.getElementById('EditablePhotoUrl');
+    photo.innerText = recipeData.image;
 
     const ingredientsList = document.getElementById('ingredients-list');
     if (!ingredientsList) {
@@ -201,6 +208,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         editButtonGroup.classList.add('d-none');
         editButton.classList.remove('d-none');
+
+        setupMethodStepHighlights();
     });
 
     cancelButton2.addEventListener('click', (e) => {
@@ -218,6 +227,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         editButtonGroup.classList.add('d-none');
         editButton.classList.remove('d-none');
+
+        setupMethodStepHighlights();
     });
 
     // Save Changes
@@ -237,6 +248,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         editButtonGroup.classList.add('d-none');
         editButton.classList.remove('d-none');
+
+        setupMethodStepHighlights();
 
         await apiEditRecipe(updatedData);
     });
@@ -264,7 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const li = document.createElement('li');
-        li.textContent = '<br>';
+        li.textContent = '';
         li.className = 'list-group-item editable border';
         li.setAttribute('contenteditable', 'true');
         li.id = `EditableMethod${methodList.childNodes.length + 1}`;
