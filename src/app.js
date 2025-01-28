@@ -92,7 +92,7 @@ htmlRouter.get('/recipe/:_', requireLogin, (req, res) => res.sendFile(path.join(
 
 // * ===== Login API Endpoints =====
 
-apiRouter.post('/login', (req, res) => {
+apiRouter.post('/auth/login', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -111,7 +111,7 @@ apiRouter.post('/login', (req, res) => {
     return res.status(401).json({ message: 'Invalid username or password' });
 });
 
-apiRouter.all('/logout', requireLogin, (req, res) => {
+apiRouter.all('/auth/logout', requireLogin, (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ message: 'Error logging out' });
@@ -121,7 +121,7 @@ apiRouter.all('/logout', requireLogin, (req, res) => {
     });
 });
 
-apiRouter.get('/is_logged_in', (req, res) => {
+apiRouter.all('/auth/is_auth', (req, res) => {
     if (req.session.user) {
         return res.status(200).json(true);
     }
@@ -130,7 +130,7 @@ apiRouter.get('/is_logged_in', (req, res) => {
 
 // * ===== Profile Endpoints =====
 
-apiRouter.post('/create_account', (req, res) => {
+apiRouter.post('/profile/create', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -146,14 +146,14 @@ apiRouter.post('/create_account', (req, res) => {
     return res.status(501); // Not implemented yet
 });
 
-apiRouter.delete('/profile', requireLogin, (req, res) => {
+apiRouter.all('/profile/delete', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(req.session.user.user_id);
 
     datastore.deleteUser(user.username);
     return res.status(501); // Not implemented yet
 });
 
-apiRouter.get('/profile', requireLogin, (req, res) => {
+apiRouter.get('/profile/get', requireLogin, (req, res) => {
     if (!req.session.user) return res.status(401).json({ message: 'Invalid username or password' });
     const user = datastore.getUserFromUserId(req.session.user.user_id);
 
@@ -164,13 +164,13 @@ apiRouter.get('/profile', requireLogin, (req, res) => {
     });
 });
 
-apiRouter.get('/profile/:username', requireLogin, (req, res) => {
+function getUserFromUsername(req, res, username) {
     let user;
-    if (req.params.username === 'self') {
+    if (username === 'self') {
         if (!req.session.user) return res.status(401).json({ message: 'Invalid username or password' });
         user = datastore.getUserFromUserId(req.session.user.user_id);
     } else {
-        user = datastore.getUserFromUsername(req.params.username);
+        user = datastore.getUserFromUsername(username);
     }
 
     return res.status(200).json({
@@ -178,9 +178,18 @@ apiRouter.get('/profile/:username', requireLogin, (req, res) => {
         bio: user.bio,
         pfpLink: user.pfpLink,
     });
+}
+
+apiRouter.get('/profile/get/:username', requireLogin, (req, res) => {
+    return getUserFromUsername(req, res, req.params.username);
 });
 
-apiRouter.post('/modify_profile', requireLogin, (req, res) => {
+apiRouter.post('/profile/get_username', requireLogin, (req, res) => {
+    const { username } = req.body;
+    return getUserFromUsername(req, res, username);
+});
+
+apiRouter.post('/profile/modify', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(req.session.user.user_id);
     const { displayName, bio } = req.body;
 
@@ -195,34 +204,39 @@ apiRouter.post('/modify_profile', requireLogin, (req, res) => {
 
 // * ===== Recipe Endpoints =====
 
-apiRouter.get('/recipes', requireLogin, (req, res) => {
+apiRouter.get('/recipes/get', requireLogin, (req, res) => {
     return res.status(200).json(recipes.getRecipes(datastore));
 });
 
-apiRouter.get('/recipe/:recipeId', requireLogin, (req, res) => {
+apiRouter.post('/recipe/get', requireLogin, (req, res) => {
+    const { recipeId } = req.body;
+    return res.status(200).json(recipes.getRecipe(datastore, Number(recipeId)));
+});
+
+apiRouter.get('/recipe/get/:recipeId', requireLogin, (req, res) => {
     return res.status(200).json(recipes.getRecipe(datastore, Number(req.params.recipeId)));
 });
 
-apiRouter.all('/new_recipe', requireLogin, (req, res) => {
+apiRouter.all('/recipe/create', requireLogin, (req, res) => {
     const recipeId = recipes.createNewRecipe(datastore, req.session.user.user_id);
 
     return res.json(recipeId);
 });
 
-apiRouter.post('/fork_recipe', requireLogin, (req, res) => {
+apiRouter.post('/recipe/fork', requireLogin, (req, res) => {
     const { forkRecipeId } = req.body;
     const recipeId = recipes.forkRecipe(datastore, req.session.user.user_id, forkRecipeId);
     console.log(recipeId);
     return res.json(recipeId); // Not implemented yet
 });
 
-apiRouter.post('/log_bake', requireLogin, (req, res) => {
-    // todo
-    recipes.logBake();
-    return res.status(501); // Not implemented yet
-});
+// apiRouter.post('/log_bake', requireLogin, (req, res) => {
+//     // todo
+//     recipes.logBake();
+//     return res.status(501); // Not implemented yet
+// });
 
-apiRouter.post('/edit_recipe', requireLogin, (req, res) => {
+apiRouter.post('/recipe/edit', requireLogin, (req, res) => {
     const { recipeId, updatedContent } = req.body;
     if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
         recipes.editRecipe(datastore, recipeId, updatedContent);

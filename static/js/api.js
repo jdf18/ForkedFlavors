@@ -59,70 +59,63 @@ async function tryApiPostJsonReturnJson(endpoint, data) {
     return null;
 }
 
-window.apiGetRecipes = async function () {
-    return tryApiGetReturnJson('recipes');
-};
-
-window.apiIsLoggedIn = async function () {
-    return tryApiGetReturnJson('is_logged_in');
-};
-
 window.apiLogin = async function (username, password) {
-    return tryApiPostJsonReturnJson('login', { username, password });
+    return tryApiPostJsonReturnJson('auth/login', { username, password });
 };
 
 window.apiLogout = async function () {
-    return tryApiGetReturnJson('logout');
+    return tryApiGetReturnJson('auth/logout');
+};
+
+window.apiIsLoggedIn = async function () {
+    return tryApiGetReturnJson('auth/is_auth');
 };
 
 window.apiSignup = async function (username, password) {
-    return tryApiPostJsonReturnJson('create_account', { username, password });
+    return tryApiPostJsonReturnJson('profile/create', { username, password });
+};
+
+window.apiDeleteAccount = async function () {
+    return tryApiGetReturnJson('profile/delete');
+};
+
+window.apiGetSelfProfile = async function () {
+    return tryApiGetReturnJson('profile/get');
+};
+
+window.apiGetProfile = async function (username) {
+    return tryApiPostJsonReturnJson('profile/get_username', { username });
+};
+window.apiGetProfileLegacy = async function (username) {
+    return tryApiGetReturnJson(`profile/get/${username}`);
+};
+
+window.apiModifyProfile = async function (displayName, bio) {
+    return tryApiPostJsonReturnJson('profile/modify', { displayName, bio });
+};
+
+window.apiGetRecipes = async function () {
+    return tryApiGetReturnJson('recipes/get');
 };
 
 window.apiGetRecipe = async function () {
     const recipeId = window.getCurrentRecipeId();
-    return tryApiGetReturnJson(`recipe/${recipeId}`);
+    return tryApiPostJsonReturnJson('recipe/get', { recipeId });
+};
+window.apiGetRecipeLegacy = async function () {
+    const recipeId = window.getCurrentRecipeId();
+    return tryApiGetReturnJson(`recipe/get/${recipeId}`);
 };
 
 window.apiCreateRecipe = async function () {
-    return tryApiGetReturnJson('new_recipe');
+    return tryApiGetReturnJson('recipe/create');
 };
 
 window.apiForkRecipe = async function (forkId) {
-    return tryApiPostJsonReturnJson('fork_recipe', { forkRecipeId: forkId });
+    return tryApiPostJsonReturnJson('recipe/fork', { forkRecipeId: forkId });
 };
 
 window.apiEditRecipe = async function (data) {
     const recipeId = window.getCurrentRecipeId();
-    return tryApiPostJsonReturnJson('edit_recipe', { recipeId, updatedContent: data });
-};
-
-window.apiGetProfile = async function (username) {
-    return tryApiGetReturnJson(`profile/${username}`);
-};
-
-window.apiModifyProfile = async function (displayName, bio) {
-    return tryApiPostJsonReturnJson('modify_profile', { displayName, bio });
-};
-
-window.apiDeleteAccount = async function () {
-    try {
-        const response = await fetch('/api/profile', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            console.log('Account deleted');
-        } else {
-            console.log(`Error: ${result.message}`);
-        }
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
+    return tryApiPostJsonReturnJson('recipe/edit', { recipeId, updatedContent: data });
 };
