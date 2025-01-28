@@ -16,7 +16,7 @@ function forkRecipe(datastore, userId, forkId) {
 
 function editRecipe(datastore, recipeId, newContent) {
     const title = newContent.EditableRecipeTitle;
-    const photo = newContent.EditablePhotoUrl
+    const photo = newContent.EditablePhotoUrl;
 
     const ingredients = [];
     const method = [];

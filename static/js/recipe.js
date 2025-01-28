@@ -104,8 +104,8 @@ async function loadRecipeData() {
     const recipeData = await apiGetRecipe();
 
     const recipeHeader = document.querySelector('.recipe-header');
-    const imageUrl = ((recipeData.image === null) ? '/img/header-background.jpg' : recipeData.image)
-    recipeHeader.style.backgroundImage = `url(${imageUrl})`
+    const imageUrl = ((recipeData.image === null) ? '/img/header-background.jpg' : recipeData.image);
+    recipeHeader.style.backgroundImage = `url(${imageUrl})`;
 
     const title = document.getElementById('EditableRecipeTitle');
     title.innerText = recipeData.title;

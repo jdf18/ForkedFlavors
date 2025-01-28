@@ -235,7 +235,7 @@ class Datastore {
             title: this.recipes[index].title,
             ingredients: this.recipes[index].ingredients,
             method: this.recipes[index].method,
-            image: (this.recipes[index].photo === null) ? `/img/header-background.jpg` : this.recipes[index].photo,
+            image: (this.recipes[index].photo === null) ? '/img/header-background.jpg' : this.recipes[index].photo,
             user: this.recipes[index].owner_id,
         };
     }
@@ -251,7 +251,7 @@ class Datastore {
         this.recipes[index].title = sanitizeHtml(title);
         this.recipes[index].ingredients = ingredients.map(sanitizeHtml);
         this.recipes[index].method = method.map(sanitizeHtml);
-        this.recipes[index].photo = (sanitizeHtml(photo) === `/img/header-background.jpg`) ? null : sanitizeHtml(photo);
+        this.recipes[index].photo = (sanitizeHtml(photo) === '/img/header-background.jpg') ? null : sanitizeHtml(photo);
 
         this.save();
 
