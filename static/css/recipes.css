@@ -1,0 +1,43 @@
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    height: 50px;
+    border-radius: 30px;
+    padding-left: 35px;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+header {
+    position: relative;
+    background-image: url('/img/header-background.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-position: center;
+    height: 300px; /* Adjust height as needed */
+    color: white;
+}
+
+.header-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5); /* Adds a dark overlay */
+}
+
+.header-content {
+    position: relative;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

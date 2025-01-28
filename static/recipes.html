@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forked Flavours: Recipes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/recipes.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="#">Forked Flavours</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item" id="nav-my-recipes">
+                    <a class="nav-link disabled" href="#">My recipes</a>
+                </li>
+                <li class="nav-item" id="nav-my-account">
+                    <a class="nav-link disabled" href="#">Account</a>
+                </li>
+                <li class="nav-item" id="nav-create-new">
+                    <button class="btn" id="create-new-btn">Create new</button>
+                </li>
+            </ul>
+            <button class="btn btn-outline-success btn-lg login-btn" id="loginBtn">Login</button>
+            <button class="btn btn-success btn-lg login-btn hidden" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Login Modal Content -->
+    <div class="modal fade" id="loginModal" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header bg-success" style="padding:35px 50px;">
+                    <h4>Login</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form" id="loginForm">
+                        <div class="form-group">
+                            <label for="login-username"><span class="glyphicon glyphicon-user"></span> Username</label>
+                            <input type="text" class="form-control" id="login-username" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+                            <input type="text" class="form-control" id="login-password" placeholder="Enter password">
+                            <span>This form is not guaranteed to be secure so don't use your actual password</span>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                    <p><a href="javascript:openSignup()">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal Content -->
+    <div class="modal fade" id="signupModal" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header bg-success" style="padding:35px 50px;">
+                    <h4>Signup</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form" id="signupForm">
+                        <div class="form-group">
+                            <label for="signup-username"><span class="glyphicon glyphicon-user"></span> Username</label>
+                            <input type="text" class="form-control" id="signup-username" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+                            <input type="text" class="form-control" id="signup-password" placeholder="Enter password">
+                            <span>This form is not guaranteed to be secure so don't use your actual password</span>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Signup</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-overlay"></div>
+        <div class="container h-100 text-white header-content">
+            <div class="d-flex justify-content-center">
+                <h1 class="header-title">Browse Recipes</h1>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="search-container">
+                        <input type="text" class="search-input form-control" placeholder="Search for recipe..." />
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container my-4">
+            <div id="recipe-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Card text</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
