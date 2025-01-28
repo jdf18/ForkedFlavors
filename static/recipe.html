@@ -30,7 +30,7 @@
             <div class="container h-100 text-white recipe-header-content">
                 <div class="d-flex justify-content-between align-items-start">
                     <h1 class="recipe-header-title editable" contenteditable="false" id="EditableRecipeTitle">Recipe Title</h1>
-                    <p class="fs-5">Posted by: <strong>Account name</strong></p>
+                    <p class="fs-5" id="forkLabel">Posted by: <strong>Account name</strong></p>
                 </div>
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn btn-primary" id="editButton">Edit</button>
@@ -44,6 +44,12 @@
             <span>Photo url: </span>
             <a class="editable" contenteditable="false" id="EditablePhotoUrl">Recipe Title</a>
         </p>
+        <div class="container my-5">
+            <div class="justify-content-center">
+                9<p class="editable" contenteditable="false" id="EditableDescription"></p>
+            </div>
+        </div>
+
         <div class="container my-5">
             <div class="row">
                 <!-- Ingredients column -->
@@ -66,6 +72,20 @@
             <div class="text-center mt-4 d-none" id="contentEditButtons">
                 <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
                 <button type="button" class="btn btn-success" id="saveButton">Save</button>
+            </div>
+        </div>
+
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <img id="account-pfp" src="/img/placeholder-pfp.png" alt="User Profile Picture" class="rounded-circle mb-3" width="150" height="150">
+                            <h2 class="card-title" id="account-display-name"></h2>
+                            <p class="card-text text-muted" id="account-bio"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -27,8 +27,8 @@ window.initRecipes = async function () {
     searchBar.addEventListener('input', (event) => {
         const query = event.target.value.toLowerCase();
         const filteredRecipes = allRecipes.filter((recipe) => {
-            return recipe.title.toLowerCase().includes(query);
-            // || recipe.description.toLowerCase().includes(query)}
+            return recipe.title.toLowerCase().includes(query)
+             || recipe.description.toLowerCase().includes(query);
         });
 
         displayRecipes(filteredRecipes);

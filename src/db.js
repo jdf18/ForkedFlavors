@@ -211,6 +211,7 @@ class Datastore {
             recipe_id: newRecipeID,
             upstream: null,
             title: 'Untitled Recipe',
+            description: '',
             photo: null,
             ingredients: [],
             method: [],
@@ -234,14 +235,16 @@ class Datastore {
         return {
             id: this.recipes[index].recipe_id,
             title: this.recipes[index].title,
+            description: this.recipes[index].description,
             ingredients: this.recipes[index].ingredients,
             method: this.recipes[index].method,
             image: (this.recipes[index].photo === null) ? '/img/header-background.jpg' : this.recipes[index].photo,
+            upstream: this.recipes[index].upstream,
             user: this.recipes[index].owner_id,
         };
     }
 
-    editRecipe(recipeId, title, ingredients, method, photo) {
+    editRecipe(recipeId, title, description, ingredients, method, photo) {
         if (!this.initialised) {
             throw new Error('Database not initialized.');
         }
@@ -250,6 +253,7 @@ class Datastore {
         if (index === -1) return false;
 
         this.recipes[index].title = sanitizeHtml(title);
+        this.recipes[index].description = sanitizeHtml(description);
         this.recipes[index].ingredients = ingredients.map(sanitizeHtml);
         this.recipes[index].method = method.map(sanitizeHtml);
         this.recipes[index].photo = (sanitizeHtml(photo) === '/img/header-background.jpg') ? null : sanitizeHtml(photo);

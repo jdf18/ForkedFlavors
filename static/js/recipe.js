@@ -9,8 +9,22 @@ function setupMethodStepHighlights() {
     });
 }
 
+async function loadAuthorAccount(authorId) {
+    const author = await window.apiGetProfileById(authorId);
+
+    if (author == null) return;
+
+    document.getElementById('account-display-name').innerText = author.displayName;
+    document.getElementById('account-bio').innerText = author.bio;
+    if (author.pfpLink === undefined) {
+        document.getElementById('account-pfp').src = '/img/placeholder-pfp.png';
+    } else {
+        document.getElementById('account-pfp').src = author.pfpLink;
+    }
+}
+
 async function loadRecipeData() {
-    const recipeData = await window.apiGetRecipe();
+    const recipeData = await window.apiGetCurrentRecipe();
 
     const recipeHeader = document.querySelector('.recipe-header');
     const imageUrl = ((recipeData.image === null) ? '/img/header-background.jpg' : recipeData.image);
@@ -19,8 +33,19 @@ async function loadRecipeData() {
     const title = document.getElementById('EditableRecipeTitle');
     title.innerText = recipeData.title;
 
+    const description = document.getElementById('EditableDescription');
+    description.innerText = recipeData.description;
+
     const photo = document.getElementById('EditablePhotoUrl');
     photo.innerText = recipeData.image;
+
+    const forkLabel = document.getElementById('forkLabel');
+    if (recipeData.upstream == null) {
+        forkLabel.innerHTML = '';
+    } else {
+        const forkData = await window.apiGetRecipe(recipeData.upstream);
+        forkLabel.innerHTML = `Forked from <strong><a href="/recipe/${recipeData.upstream}">${forkData.title}</a></strong>`;
+    }
 
     const ingredientsList = document.getElementById('ingredients-list');
     if (!ingredientsList) {
@@ -57,6 +82,8 @@ async function loadRecipeData() {
     });
 
     setupMethodStepHighlights();
+
+    await loadAuthorAccount(recipeData.user);
 }
 
 window.initRecipe = async function () {

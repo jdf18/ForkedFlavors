@@ -21,6 +21,7 @@ function forkRecipe(datastore, userId, forkId) {
 
 function editRecipe(datastore, recipeId, newContent) {
     const title = newContent.EditableRecipeTitle;
+    const description = newContent.EditableDescription;
     const photo = newContent.EditablePhotoUrl;
 
     const ingredients = [];
@@ -36,7 +37,7 @@ function editRecipe(datastore, recipeId, newContent) {
         }
     }
 
-    datastore.editRecipe(recipeId, title, ingredients, method, photo);
+    datastore.editRecipe(recipeId, title, description, ingredients, method, photo);
 }
 
 function getBakeImages() {

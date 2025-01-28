@@ -82,6 +82,7 @@ function logoutUser(res) {
 htmlRouter.get('/', (req, res) => res.sendFile(path.join(__dirname, '../static/index.html')));
 
 htmlRouter.get('/account', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/account.html')));
+htmlRouter.get('/user/:_', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/user.html')));
 
 htmlRouter.get('/recipes', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipes.html')));
 htmlRouter.get('/recipe/:_', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipe.html')));
@@ -184,9 +185,20 @@ apiRouter.get('/profile/get/:username', requireLogin, (req, res) => {
     return getUserFromUsername(req, res, req.params.username);
 });
 
-apiRouter.post('/profile/get_username', requireLogin, (req, res) => {
+apiRouter.post('/profile/get_by_username', requireLogin, (req, res) => {
     const { username } = req.body;
     return getUserFromUsername(req, res, username);
+});
+
+apiRouter.post('/profile/get_by_id', requireLogin, (req, res) => {
+    const { accountId } = req.body;
+    const user = datastore.getUserFromUserId(accountId);
+
+    return res.status(200).json({
+        displayName: user.display_name,
+        bio: user.bio,
+        pfpLink: user.pfpLink,
+    });
 });
 
 apiRouter.post('/profile/modify', requireLogin, (req, res) => {
@@ -230,12 +242,6 @@ apiRouter.post('/recipe/fork', requireLogin, (req, res) => {
     return res.json(recipeId); // Not implemented yet
 });
 
-// apiRouter.post('/log_bake', requireLogin, (req, res) => {
-//     // todo
-//     recipes.logBake();
-//     return res.status(501); // Not implemented yet
-// });
-
 apiRouter.post('/recipe/edit', requireLogin, (req, res) => {
     const { recipeId, updatedContent } = req.body;
     if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
@@ -245,6 +251,12 @@ apiRouter.post('/recipe/edit', requireLogin, (req, res) => {
     }
     return res.status(403);
 });
+
+// apiRouter.post('/log_bake', requireLogin, (req, res) => {
+//     // todo
+//     recipes.logBake();
+//     return res.status(501); // Not implemented yet
+// });
 
 app.use('/', htmlRouter);
 app.use('/api', apiRouter);

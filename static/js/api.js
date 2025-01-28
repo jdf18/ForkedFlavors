@@ -84,10 +84,14 @@ window.apiGetSelfProfile = async function () {
 };
 
 window.apiGetProfile = async function (username) {
-    return tryApiPostJsonReturnJson('profile/get_username', { username });
+    return tryApiPostJsonReturnJson('profile/get_by_username', { username });
 };
 window.apiGetProfileLegacy = async function (username) {
     return tryApiGetReturnJson(`profile/get/${username}`);
+};
+
+window.apiGetProfileById = async function (accountId) {
+    return tryApiPostJsonReturnJson('profile/get_by_id', { accountId });
 };
 
 window.apiModifyProfile = async function (displayName, bio) {
@@ -98,7 +102,10 @@ window.apiGetRecipes = async function () {
     return tryApiGetReturnJson('recipes/get');
 };
 
-window.apiGetRecipe = async function () {
+window.apiGetRecipe = async function (recipeId) {
+    return tryApiPostJsonReturnJson('recipe/get', { recipeId });
+};
+window.apiGetCurrentRecipe = async function () {
     const recipeId = window.getCurrentRecipeId();
     return tryApiPostJsonReturnJson('recipe/get', { recipeId });
 };
