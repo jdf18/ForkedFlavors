@@ -232,6 +232,7 @@ class Datastore {
         if (index === -1) return false;
 
         return {
+            id: this.recipes[index].recipe_id,
             title: this.recipes[index].title,
             ingredients: this.recipes[index].ingredients,
             method: this.recipes[index].method,

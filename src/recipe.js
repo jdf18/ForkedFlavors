@@ -40,8 +40,12 @@ function getBakeImages() {
 
 function getRecipe(datastore, recipeId) {
     getBakeImages();
-    const recipe = datastore.getRecipe(recipeId);
-    return recipe;
+    return datastore.getRecipe(recipeId);
+}
+
+function getRecipes(datastore) {
+    const ids = datastore.recipes.map((recipe) => recipe.recipe_id);
+    return ids.map((recipeId) => getRecipe(datastore, recipeId));
 }
 
 function addBakeImage() {
@@ -57,5 +61,6 @@ module.exports = {
     forkRecipe,
     editRecipe,
     getRecipe,
+    getRecipes,
     logBake,
 };

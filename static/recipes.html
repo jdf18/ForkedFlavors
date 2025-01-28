@@ -108,7 +108,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="search-container">
-                        <input type="text" class="search-input form-control" placeholder="Search for recipe..." />
+                        <input type="text" id="search-bar" class="search-input form-control" placeholder="Search for recipe..." />
                         <i class="fas fa-search search-icon"></i>
                     </div>
                 </div>
@@ -118,21 +118,13 @@
 
     <main>
         <div class="container my-4">
-            <div id="recipe-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Card text</p>
-                        </div>
-                    </div>
-                </div>
-
+            <div id="recipes-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                <!-- Recipe cards added here -->
             </div>
         </div>
     </main>
 
+    <script src="/js/login.js"></script>
+    <script src="/js/recipes.js"></script>
 </body>
 </html>
