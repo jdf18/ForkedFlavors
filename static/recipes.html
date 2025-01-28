@@ -12,92 +12,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">Forked Flavours</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <script src="/js/pullhtml.js"></script> <!-- Contains pullHTML function to load html components -->
+    <script src="/js/api.js"></script> <!-- Contains all functions to call the API -->
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item" id="nav-my-recipes">
-                    <a class="nav-link disabled" href="#">My recipes</a>
-                </li>
-                <li class="nav-item" id="nav-my-account">
-                    <a class="nav-link disabled" href="#">Account</a>
-                </li>
-                <li class="nav-item" id="nav-create-new">
-                    <button class="btn" id="create-new-btn">Create new</button>
-                </li>
-            </ul>
-            <button class="btn btn-outline-success btn-lg login-btn" id="loginBtn">Login</button>
-            <button class="btn btn-success btn-lg login-btn hidden" id="logoutBtn">Logout</button>
-        </div>
-    </nav>
-
-    <!-- Login Modal Content -->
-    <div class="modal fade" id="loginModal" role="dialog">
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-                <div class="modal-header bg-success" style="padding:35px 50px;">
-                    <h4>Login</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body" style="padding:40px 50px;">
-                    <form role="form" id="loginForm">
-                        <div class="form-group">
-                            <label for="login-username"><span class="glyphicon glyphicon-user"></span> Username</label>
-                            <input type="text" class="form-control" id="login-username" placeholder="Enter username">
-                        </div>
-                        <div class="form-group">
-                            <label for="login-password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-                            <input type="text" class="form-control" id="login-password" placeholder="Enter password">
-                            <span>This form is not guaranteed to be secure so don't use your actual password</span>
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-                    <p><a href="javascript:openSignup()">Sign Up</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Signup Modal Content -->
-    <div class="modal fade" id="signupModal" role="dialog">
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-                <div class="modal-header bg-success" style="padding:35px 50px;">
-                    <h4>Signup</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body" style="padding:40px 50px;">
-                    <form role="form" id="signupForm">
-                        <div class="form-group">
-                            <label for="signup-username"><span class="glyphicon glyphicon-user"></span> Username</label>
-                            <input type="text" class="form-control" id="signup-username" placeholder="Enter username">
-                        </div>
-                        <div class="form-group">
-                            <label for="signup-password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-                            <input type="text" class="form-control" id="signup-password" placeholder="Enter password">
-                            <span>This form is not guaranteed to be secure so don't use your actual password</span>
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Signup</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="insertHtmlNavbar"></div>
+    <script>
+        pullHTML('navbar', 'insertHtmlNavbar', () => {
+            window.initNavbar();
+            window.initLogin();
+        });
+    </script>
+    <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
+    <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
     <header>
         <div class="header-overlay"></div>
@@ -124,7 +50,11 @@
         </div>
     </main>
 
-    <script src="/js/login.js"></script>
-    <script src="/js/recipes.js"></script>
+    <script defer src="/js/recipes.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initRecipes();
+        })
+    </script>
 </body>
 </html>

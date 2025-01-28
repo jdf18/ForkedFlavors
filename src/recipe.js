@@ -8,7 +8,12 @@ function forkRecipe(datastore, userId, forkId) {
     const index = datastore.recipes.findIndex((recipe) => recipe.recipe_id === recipeId);
     if (index === -1) return false;
 
+    const forkIndex = datastore.recipes.findIndex((recipe) => recipe.recipe_id === forkId);
+    if (index === -1) return false;
+
     datastore.recipes[index].upstream = forkId;
+    datastore.recipes[index].ingredients = datastore.recipes[forkIndex].ingredients;
+    datastore.recipes[index].method = datastore.recipes[forkIndex].method;
     datastore.save();
 
     return recipeId;

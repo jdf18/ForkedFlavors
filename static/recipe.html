@@ -11,31 +11,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">Forked Flavours</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <script src="/js/pullhtml.js"></script> <!-- Contains pullHTML function to load html components -->
+    <script src="/js/api.js"></script> <!-- Contains all functions to call the API -->
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item" id="nav-my-recipes">
-                    <a class="nav-link disabled" href="#">My recipes</a>
-                </li>
-                <li class="nav-item" id="nav-my-account">
-                    <a class="nav-link disabled" href="#">Account</a>
-                </li>
-                <li class="nav-item" id="nav-my-account">
-                    <button class="btn" id="create-new-btn">Create new</button>
-                </li>
-            </ul>
-            <button class="btn btn-outline-success btn-lg login-btn" id="loginBtn">Login</button>
-            <button class="btn btn-success btn-lg login-btn hidden" id="logoutBtn">Logout</button>
-        </div>
-    </nav>
+    <div id="insertHtmlNavbar"></div>
+    <script>
+        pullHTML('navbar', 'insertHtmlNavbar', () => {
+            window.initNavbar();
+            window.initLogin();
+        });
+    </script>
+    <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
+    <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
+
     <main>
         <div class="recipe-header">
             <div class="recipe-header-overlay"></div>
@@ -93,38 +81,15 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <img class="card-img-top" src="" alt="Card image caption">
-                        <div class="card-body">
-                            <p class="card-text">Caption or comment</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <img class="card-img-top" src="" alt="Card image caption">
-                        <div class="card-body">
-                            <p class="card-text">Caption or comment</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <img class="card-img-top" src="" alt="Card image caption">
-                        <div class="card-body">
-                            <p class="card-text">Caption or comment</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
 
-    <script src="/js/login.js"></script>
-    <script src="/js/recipe.js"></script>
+    <script defer src="/js/recipe.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initRecipe();
+        })
+    </script>
 </body>
 </html>
