@@ -1,54 +1,8 @@
 /* global bootstrap */
 
-async function apiGetProfile(username) {
-    try {
-        const response = await fetch(`/api/profile/${username}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            return result;
-        }
-        console.log(`Error: ${result.message}`);
-        return null;
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-        return null;
-    }
-}
-
-async function apiModifyProfile(displayName, bio) {
-    try {
-        const response = await fetch('/api/modify_profile', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ displayName, bio }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            console.log(`Welcome, ${result.username}!`);
-        } else {
-            console.log(`Error: ${result.message}`);
-        }
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-}
-
 async function updatePageProfile() {
     const username = 'self';
-    const profileData = await apiGetProfile(username);
+    const profileData = await window.apiGetProfile(username);
 
     if (profileData == null) return;
 
@@ -61,36 +15,14 @@ async function updatePageProfile() {
     }
 }
 
-async function deleteAccount() {
-    try {
-        const response = await fetch('/api/profile', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            console.log('Account deleted');
-        } else {
-            console.log(`Error: ${result.message}`);
-        }
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
+window.initAccount = async function () {
     await updatePageProfile();
 
     const accountModal = new bootstrap.Modal(document.getElementById('accountModal'));
     const deleteAccountModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
 
     document.getElementById('edit-profile-btn').addEventListener('click', () => {
-        apiGetProfile('self').then((profile) => {
+        window.apiGetProfile('self').then((profile) => {
             document.getElementById('account-form-display-name').value = profile.displayName;
             document.getElementById('account-form-bio').value = profile.bio;
         });
@@ -107,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const displayName = document.getElementById('account-form-display-name').value;
         const bio = document.getElementById('account-form-bio').value;
 
-        await apiModifyProfile(displayName, bio);
+        await window.apiModifyProfile(displayName, bio);
 
         accountModal.hide();
         await updatePageProfile();
@@ -115,11 +47,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('cancelDeleteAccount').addEventListener('click', () => {
         deleteAccountModal.hide();
-        // todo: logout + redirect to index
     });
 
     document.getElementById('confirmDeleteAccount').addEventListener('click', () => {
-        deleteAccount();
-        // todo: logout + redirect to index
+        window.apiDeleteAccount();
+        window.apiLogout();
+
+        window.location.href = '/';
     });
-});
+};
+// document.addEventListener('DOMContentLoaded', window.initAccount);

@@ -1,4 +1,4 @@
-async function pullHTML(endpoint, identifier) {
+async function pullHTML(endpoint, identifier, next) {
     let result;
     try {
         const response = await fetch(`/html/${endpoint}.html`, {
@@ -22,5 +22,5 @@ async function pullHTML(endpoint, identifier) {
 
     const element = document.getElementById(identifier);
     element.innerHTML = result;
-    return true;
+    return next();
 }

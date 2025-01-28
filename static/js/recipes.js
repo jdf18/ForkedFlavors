@@ -1,26 +1,3 @@
-async function apiGetRecipes() {
-    try {
-        const response = await fetch('/api/recipes', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            return result;
-        }
-        console.log(`Error: ${result.message}`);
-        return null;
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-    return null;
-}
-
 function displayRecipes(recipes) {
     const recipeContainer = document.getElementById('recipes-container');
     recipeContainer.innerHTML = '';
@@ -42,8 +19,8 @@ function displayRecipes(recipes) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const allRecipes = await apiGetRecipes();
+window.initRecipes = async function () {
+    const allRecipes = await window.apiGetRecipes();
     displayRecipes(allRecipes);
 
     const searchBar = document.getElementById('search-bar');
@@ -56,4 +33,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         displayRecipes(filteredRecipes);
     });
-});
+};
+// document.addEventListener('DOMContentLoaded', window.initRecipes);

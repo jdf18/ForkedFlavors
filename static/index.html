@@ -10,17 +10,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
 <body>
-    <script src="/js/pullhtml.js"></script>
+    <script src="/js/pullhtml.js"></script> <!-- Contains pullHTML function to load html components -->
+    <script src="/js/api.js"></script> <!-- Contains all functions to call the API -->
 
     <div id="insertHtmlNavbar"></div>
-    <script>pullHTML('navbar', 'insertHtmlNavbar')</script>
-    <script defer src="js/login.js"></script>
-    <script defer src="js/recipe.js"></script>
+    <script>
+        pullHTML('navbar', 'insertHtmlNavbar', () => {
+            window.initNavbar();
+            window.initLogin();
+        });
+    </script>
+    <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
+    <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
     <header class="page-header header container-fluid">
-        <img src="img/header-background.jpg" class="img-fluid" alt="Responsive image">
+        <img src="/img/header-background.jpg" class="img-fluid" alt="Responsive image">
     </header>
 
-    <script src="js/index.js"></script>
+
+    <script defer src="/js/index.js"></script>
 </body>
 </html>

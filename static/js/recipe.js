@@ -1,94 +1,3 @@
-function getRecipeId() {
-    const url = window.location.href;
-    const numStr = url.substring(url.lastIndexOf('/') + 1);
-    let recipeId = 0;
-    for (let i = 0; i < numStr.length; i++) {
-        if (numStr[i] < '0' || numStr[i] > '9') {
-            break;
-        }
-        recipeId *= 10;
-        recipeId += Number(numStr[i]);
-    }
-    return recipeId;
-}
-
-async function apiGetRecipe() {
-    const recipeId = getRecipeId();
-
-    try {
-        const response = await fetch(`/api/recipe/${recipeId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            return result;
-        }
-        console.log(`Error: ${result.message}`);
-        return null;
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-    return null;
-}
-
-async function apiCreateRecipe() {
-    try {
-        const response = await fetch('/api/new_recipe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            console.log('Recipe created');
-            return result;
-        }
-        console.log(`Error: ${result.message}`);
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-    return null;
-}
-
-async function apiEditRecipe(data) {
-    const recipeId = getRecipeId();
-
-    try {
-        const response = await fetch('/api/edit_recipe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                recipeId,
-                updatedContent: data,
-            }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            console.log('Recipe edited');
-            return result;
-        }
-        console.log(`Error: ${result.message}`);
-    } catch (error) {
-        console.log('Something went wrong. Please try again.');
-        console.error(error);
-    }
-    return null;
-}
-
 function setupMethodStepHighlights() {
     const methodSteps = document.querySelectorAll('.method li.list-group-item');
 
@@ -101,7 +10,7 @@ function setupMethodStepHighlights() {
 }
 
 async function loadRecipeData() {
-    const recipeData = await apiGetRecipe();
+    const recipeData = await window.apiGetRecipe();
 
     const recipeHeader = document.querySelector('.recipe-header');
     const imageUrl = ((recipeData.image === null) ? '/img/header-background.jpg' : recipeData.image);
@@ -150,7 +59,7 @@ async function loadRecipeData() {
     setupMethodStepHighlights();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+window.initRecipe = async function () {
     const editButton = document.getElementById('editButton');
     const saveButton = document.getElementById('saveButton');
     const cancelButton = document.getElementById('cancelButton');
@@ -241,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setupMethodStepHighlights();
 
-        await apiEditRecipe(updatedData);
+        await window.apiEditRecipe(updatedData);
     });
 
     addIngredientBtn.addEventListener('click', () => {
@@ -275,4 +184,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     await loadRecipeData();
-});
+};
+// document.addEventListener('DOMContentLoaded', window.initRecipe);
