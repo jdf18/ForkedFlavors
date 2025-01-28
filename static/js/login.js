@@ -99,6 +99,13 @@ function openSignup() {
     signupModal.show();
 }
 
+async function createNewRecipe(e) {
+    e.preventDefault();
+
+    const recipeId = await apiCreateRecipe();
+    window.location.href = `/recipe/${recipeId}`;
+}
+
 async function updateNavbar() {
     const isLoggedIn = await apiIsLoggedIn();
 
@@ -106,9 +113,15 @@ async function updateNavbar() {
         document.getElementById('loginBtn').classList.add('hidden');
         document.getElementById('logoutBtn').classList.remove('hidden');
 
-        document.getElementById('nav-my-recipes').children[0].classList.remove('disabled');
+        const loginOnlyLinks = document.querySelectorAll('.nav-login-only');
+        loginOnlyLinks.forEach((link) => {
+            link.classList.remove('disabled');
+        });
+
+        const createNewButton = document.getElementById('create-new-recipe');
+        createNewButton.addEventListener('click', createNewRecipe);
+
         document.getElementById('nav-my-recipes').children[0].href = '/recipes';
-        document.getElementById('nav-my-account').children[0].classList.remove('disabled');
         document.getElementById('nav-my-account').children[0].href = '/account';
     } else {
         const currentPath = window.location.pathname;
@@ -119,9 +132,15 @@ async function updateNavbar() {
         document.getElementById('loginBtn').classList.remove('hidden');
         document.getElementById('logoutBtn').classList.add('hidden');
 
-        document.getElementById('nav-my-recipes').children[0].classList.add('disabled');
+        const loginOnlyLinks = document.querySelectorAll('.nav-login-only');
+        loginOnlyLinks.forEach((link) => {
+            link.classList.add('disabled');
+        });
+
+        const createNewButton = document.getElementById('create-new-recipe');
+        createNewButton.removeEventListener('click', createNewRecipe);
+
         document.getElementById('nav-my-recipes').children[0].href = '#';
-        document.getElementById('nav-my-account').children[0].classList.add('disabled');
         document.getElementById('nav-my-account').children[0].href = '#';
     }
 }

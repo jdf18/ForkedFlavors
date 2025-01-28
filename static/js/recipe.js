@@ -151,16 +151,6 @@ async function loadRecipeData() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const createNewButton = document.getElementById('create-new-btn');
-
-    createNewButton.addEventListener('click', async (e) => {
-        e.preventDefault();
-
-        const recipeId = await apiCreateRecipe();
-
-        window.location.href = `/recipe/${recipeId}`;
-    });
-
     const editButton = document.getElementById('editButton');
     const saveButton = document.getElementById('saveButton');
     const cancelButton = document.getElementById('cancelButton');
