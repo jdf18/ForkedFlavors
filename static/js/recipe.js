@@ -70,6 +70,8 @@ window.initRecipe = async function () {
     const addIngredientBtn = document.getElementById('add-ingredient-btn');
     const addMethodStepBtn = document.getElementById('add-step-btn');
 
+    const forkRecipeBtn = document.getElementById('forkRecipeBtn');
+
     let originalValues = {};
 
     // Enable edit mode
@@ -181,6 +183,13 @@ window.initRecipe = async function () {
         li.setAttribute('contenteditable', 'true');
         li.id = `EditableMethod${methodList.childNodes.length + 1}`;
         methodList.appendChild(li);
+    });
+
+    forkRecipeBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const recipeId = await window.apiForkRecipe(window.getCurrentRecipeId());
+        window.location.href = `/recipe/${recipeId}`;
     });
 
     await loadRecipeData();

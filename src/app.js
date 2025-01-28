@@ -212,7 +212,7 @@ apiRouter.all('/new_recipe', requireLogin, (req, res) => {
 apiRouter.post('/fork_recipe', requireLogin, (req, res) => {
     const { forkRecipeId } = req.body;
     const recipeId = recipes.forkRecipe(datastore, req.session.user.user_id, forkRecipeId);
-
+    console.log(recipeId);
     return res.json(recipeId); // Not implemented yet
 });
 

@@ -37,7 +37,7 @@ async function tryApiGetReturnJson(endpoint) {
 
 async function tryApiPostJsonReturnJson(endpoint, data) {
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch(`/api/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -86,6 +86,10 @@ window.apiGetRecipe = async function () {
 
 window.apiCreateRecipe = async function () {
     return tryApiGetReturnJson('new_recipe');
+};
+
+window.apiForkRecipe = async function (forkId) {
+    return tryApiPostJsonReturnJson('fork_recipe', { forkRecipeId: forkId });
 };
 
 window.apiEditRecipe = async function (data) {
