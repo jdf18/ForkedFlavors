@@ -159,6 +159,8 @@ apiRouter.get('/profile/get', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(req.session.user.user_id);
 
     return res.status(200).json({
+        username: user.username,
+        id: user.user_id,
         displayName: user.display_name,
         bio: user.bio,
         pfpLink: user.pfpLink,
@@ -175,6 +177,8 @@ function getUserFromUsername(req, res, username) {
     }
 
     return res.status(200).json({
+        username: user.username,
+        id: user.user_id,
         displayName: user.display_name,
         bio: user.bio,
         pfpLink: user.pfpLink,
@@ -195,6 +199,8 @@ apiRouter.post('/profile/get_by_id', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(accountId);
 
     return res.status(200).json({
+        username: user.username,
+        id: user.user_id,
         displayName: user.display_name,
         bio: user.bio,
         pfpLink: user.pfpLink,

@@ -14,6 +14,7 @@ async function loadAuthorAccount(authorId) {
 
     if (author == null) return;
 
+    document.getElementById('account-link').href = `/user/${author.username}`;
     document.getElementById('account-display-name').innerText = author.displayName;
     document.getElementById('account-bio').innerText = author.bio;
     if (author.pfpLink === undefined) {

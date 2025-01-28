@@ -1,3 +1,8 @@
+window.getCurrentUsername = function () {
+    const url = window.location.href;
+    return url.substring(url.lastIndexOf('/') + 1);
+};
+
 window.getCurrentRecipeId = function () {
     const url = window.location.href;
     const numStr = url.substring(url.lastIndexOf('/') + 1);
