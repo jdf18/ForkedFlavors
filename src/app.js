@@ -220,10 +220,13 @@ apiRouter.post('/log_bake', requireLogin, (req, res) => {
 
 apiRouter.post('/edit_recipe', requireLogin, (req, res) => {
     const { recipeId, updatedContent } = req.body;
+    if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
+        recipes.editRecipe(datastore, recipeId, updatedContent);
 
-    recipes.editRecipe(datastore, recipeId, updatedContent);
+        return res.status(200);
+    }
+    return res.status(403);
 
-    return res.status(200);
 });
 
 app.use('/', htmlRouter);
