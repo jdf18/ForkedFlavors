@@ -14,6 +14,7 @@
         "ecmaVersion": 12
     },
     "rules": {
+        "no-restricted-globals": "off",
         "no-promise-executor-return": "off",
         "no-loop-func": "off",
         "no-await-in-loop": "off",

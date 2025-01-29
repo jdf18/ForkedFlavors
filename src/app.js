@@ -58,7 +58,10 @@ const apiLog = (req, res, next) => {
 app.use(apiLog);
 
 // Set static routes
-app.use(express.static('static'));
+app.use(express.static('static', {
+    maxAge: '15m',
+    immutable: true,
+}));
 app.use('/node_modules/bootstrap/dist', express.static('node_modules/bootstrap/dist'));
 
 function sanitizeInput(input) {
@@ -88,13 +91,28 @@ function logoutUser(req, res) {
 
 // * ========== HTML GET Endpoints ==========
 
-htmlRouter.get('/', (req, res) => res.sendFile(path.join(__dirname, '../static/index.html')));
+htmlRouter.get('/', (req, res) => {
+    res.setHeader('Cache-Control', `public, max-age=${60 * 15}`);
+    res.sendFile(path.join(__dirname, '../static/index.html'));
+});
 
-htmlRouter.get('/account', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/account.html')));
-htmlRouter.get('/user/:_', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/user.html')));
+htmlRouter.get('/account', requireLogin, (req, res) => {
+    res.setHeader('Cache-Control', `public, max-age=${60 * 15}`);
+    res.sendFile(path.join(__dirname, '../static/account.html'));
+});
+htmlRouter.get('/user/:_', requireLogin, (req, res) => {
+    res.setHeader('Cache-Control', `public, max-age=${60 * 15}`);
+    res.sendFile(path.join(__dirname, '../static/user.html'));
+});
 
-htmlRouter.get('/recipes', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipes.html')));
-htmlRouter.get('/recipe/:_', requireLogin, (req, res) => res.sendFile(path.join(__dirname, '../static/recipe.html')));
+htmlRouter.get('/recipes', requireLogin, (req, res) => {
+    res.setHeader('Cache-Control', `public, max-age=${60 * 15}`);
+    res.sendFile(path.join(__dirname, '../static/recipes.html'));
+});
+htmlRouter.get('/recipe/:_', requireLogin, (req, res) => {
+    res.setHeader('Cache-Control', `public, max-age=${60 * 15}`);
+    res.sendFile(path.join(__dirname, '../static/recipe.html'));
+});
 
 // * ========== API Endpoints ==========
 
