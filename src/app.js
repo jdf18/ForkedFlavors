@@ -255,7 +255,17 @@ apiRouter.post('/recipe/edit', requireLogin, (req, res) => {
 
         return res.status(200);
     }
-    return res.status(403);
+    return res.status(401);
+});
+
+apiRouter.post('/recipe/delete', requireLogin, (req, res) => {
+    const { recipeId } = req.body;
+    if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
+        datastore.deleteRecipe(recipeId);
+
+        return res.status(200);
+    }
+    return res.status(401);
 });
 
 // apiRouter.post('/log_bake', requireLogin, (req, res) => {

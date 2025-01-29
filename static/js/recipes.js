@@ -5,6 +5,7 @@ window.displayRecipes = function (recipes) {
     recipes.forEach((recipe) => {
         const card = document.createElement('div');
         card.classList.add('col');
+        card.classList.add('pb-3');
         card.innerHTML = `
             <a href="/recipe/${recipe.id}" class="col-md-4 mb-4 text-decoration-none text-reset">
                 <div class="card h-100">

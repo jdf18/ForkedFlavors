@@ -34,7 +34,7 @@ async function tryApiGetReturnJson(endpoint) {
         console.log(`Error: ${result.message}`);
         return response.statusCode;
     } catch (error) {
-        console.log('Something went wrong. Please try again.');
+        console.log(`${endpoint}: Something went wrong. Please try again.`);
         console.error(error);
     }
     return null;
@@ -55,79 +55,84 @@ async function tryApiPostJsonReturnJson(endpoint, data) {
         if (response.ok) {
             return result;
         }
-        console.log(`Error: ${result.message}`);
+        console.log(`Error: ${endpoint}: ${result.message}`);
         return response.statusCode;
     } catch (error) {
-        console.log('Something went wrong. Please try again.');
+        console.log(`${endpoint}: Something went wrong. Please try again.`);
         console.error(error);
     }
     return null;
 }
 
 window.apiLogin = async function (username, password) {
-    return tryApiPostJsonReturnJson('auth/login', { username, password });
+    return await tryApiPostJsonReturnJson('auth/login', { username, password });
 };
 
 window.apiLogout = async function () {
-    return tryApiGetReturnJson('auth/logout');
+    return await tryApiGetReturnJson('auth/logout');
 };
 
 window.apiIsLoggedIn = async function () {
-    return tryApiGetReturnJson('auth/is_auth');
+    return await tryApiGetReturnJson('auth/is_auth');
 };
 
 window.apiSignup = async function (username, password) {
-    return tryApiPostJsonReturnJson('profile/create', { username, password });
+    return await tryApiPostJsonReturnJson('profile/create', { username, password });
 };
 
 window.apiDeleteAccount = async function () {
-    return tryApiGetReturnJson('profile/delete');
+    return await tryApiGetReturnJson('profile/delete');
 };
 
 window.apiGetSelfProfile = async function () {
-    return tryApiGetReturnJson('profile/get');
+    return await tryApiGetReturnJson('profile/get');
 };
 
 window.apiGetProfile = async function (username) {
-    return tryApiPostJsonReturnJson('profile/get_by_username', { username });
+    return await tryApiPostJsonReturnJson('profile/get_by_username', { username });
 };
 window.apiGetProfileLegacy = async function (username) {
-    return tryApiGetReturnJson(`profile/get/${username}`);
+    return await tryApiGetReturnJson(`profile/get/${username}`);
 };
 
 window.apiGetProfileById = async function (accountId) {
-    return tryApiPostJsonReturnJson('profile/get_by_id', { accountId });
+    return await tryApiPostJsonReturnJson('profile/get_by_id', { accountId });
 };
 
 window.apiModifyProfile = async function (displayName, bio) {
-    return tryApiPostJsonReturnJson('profile/modify', { displayName, bio });
+    return await tryApiPostJsonReturnJson('profile/modify', { displayName, bio });
 };
 
 window.apiGetRecipes = async function () {
-    return tryApiGetReturnJson('recipes/get');
+    return await tryApiGetReturnJson('recipes/get');
 };
 
 window.apiGetRecipe = async function (recipeId) {
-    return tryApiPostJsonReturnJson('recipe/get', { recipeId });
+    return await tryApiPostJsonReturnJson('recipe/get', { recipeId });
 };
 window.apiGetCurrentRecipe = async function () {
     const recipeId = window.getCurrentRecipeId();
-    return tryApiPostJsonReturnJson('recipe/get', { recipeId });
+    return await tryApiPostJsonReturnJson('recipe/get', { recipeId });
 };
 window.apiGetRecipeLegacy = async function () {
     const recipeId = window.getCurrentRecipeId();
-    return tryApiGetReturnJson(`recipe/get/${recipeId}`);
+    return await tryApiGetReturnJson(`recipe/get/${recipeId}`);
 };
 
 window.apiCreateRecipe = async function () {
-    return tryApiGetReturnJson('recipe/create');
+    return await tryApiGetReturnJson('recipe/create');
 };
 
 window.apiForkRecipe = async function (forkId) {
-    return tryApiPostJsonReturnJson('recipe/fork', { forkRecipeId: forkId });
+    return await tryApiPostJsonReturnJson('recipe/fork', { forkRecipeId: forkId });
 };
 
 window.apiEditRecipe = async function (data) {
     const recipeId = window.getCurrentRecipeId();
-    return tryApiPostJsonReturnJson('recipe/edit', { recipeId, updatedContent: data });
+    return await tryApiPostJsonReturnJson('recipe/edit', { recipeId, updatedContent: data });
+};
+
+window.apiDeleteCurrentRecipe = async function () {
+    const recipeId = window.getCurrentRecipeId();
+    return await tryApiPostJsonReturnJson('recipe/delete', { recipeId });
 };

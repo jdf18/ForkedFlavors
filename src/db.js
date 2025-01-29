@@ -268,7 +268,12 @@ class Datastore {
             throw new Error('Database not initialized.');
         }
 
-        this.recipes = this.recipes.filter((item) => !(item.recipe_id === recipeId));
+        console.log(recipeId);
+
+        const index = this.recipes.findIndex((recipe) => recipe.recipe_id === recipeId);
+        if (index === -1) return false;
+
+        this.recipes.splice(index, 1);
 
         this.save();
         return true;

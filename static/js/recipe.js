@@ -93,6 +93,8 @@ window.initRecipe = async function () {
     const cancelButton = document.getElementById('cancelButton');
     const cancelButton2 = document.getElementById('cancelButton2');
 
+    const deleteButton = document.getElementById('deleteButton');
+
     const editButtonGroup = document.getElementById('contentEditButtons');
 
     const addIngredientBtn = document.getElementById('add-ingredient-btn');
@@ -181,6 +183,10 @@ window.initRecipe = async function () {
         setupMethodStepHighlights();
 
         await window.apiEditRecipe(updatedData);
+    });
+
+    deleteButton.addEventListener('click', async (e) => {
+        await window.apiDeleteCurrentRecipe();
     });
 
     addIngredientBtn.addEventListener('click', () => {
