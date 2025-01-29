@@ -35,9 +35,9 @@ const maxRetries = 10;
 const startDelay = 1000;
 const delayMultiplier = 2;
 
-async function tryApiGetReturnJson(endpoint) {
+async function tryApiGetReturnJson(endpoint, maxTries = maxRetries) {
     let delay = startDelay;
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    for (let attempt = 0; attempt <= maxTries; attempt++) {
         try {
             const response = await fetch(`/api/${endpoint}`, {
                 method: 'GET',
@@ -59,20 +59,20 @@ async function tryApiGetReturnJson(endpoint) {
             console.log(`${endpoint}: Attempt ${attempt + 1}: Something went wrong. Please try again.`);
             console.error(error);
             showApiStatusMessage(`Failed to contact server: Attempt ${attempt}...`);
-            if (attempt <= maxRetries) {
+            if (attempt <= maxTries) {
                 await new Promise((resolve) => setTimeout(resolve, delay));
                 delay *= delayMultiplier;
             }
         }
     }
     showApiStatusMessage('Failed to reconnect to server: Try again later');
-    console.log(`${endpoint}: All ${maxRetries} retry attempts failed.`);
+    console.log(`${endpoint}: All ${maxTries} retry attempts failed.`);
     return null;
 }
 
-async function tryApiPostJsonReturnJson(endpoint, data) {
+async function tryApiPostJsonReturnJson(endpoint, data, maxTries = maxRetries) {
     let delay = startDelay;
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    for (let attempt = 0; attempt <= maxTries; attempt++) {
         try {
             const response = await fetch(`/api/${endpoint}`, {
                 method: 'POST',
@@ -95,27 +95,35 @@ async function tryApiPostJsonReturnJson(endpoint, data) {
             console.log(`${endpoint}: Something went wrong. Please try again.`);
             console.error(error);
             showApiStatusMessage(`Failed to contact server: Attempt ${attempt}...`);
-            if (attempt <= maxRetries) {
+            if (attempt <= maxTries) {
                 await new Promise((resolve) => setTimeout(resolve, delay));
                 delay *= delayMultiplier;
             }
         }
     }
     showApiStatusMessage('Failed to reconnect to server: Try again later');
-    console.log(`${endpoint}: All ${maxRetries} retry attempts failed.`);
+    console.log(`${endpoint}: All ${maxTries} retry attempts failed.`);
     return null;
 }
 
 window.apiLogin = async function (username, password) {
+    localStorage.setItem('logged_in', 'true');
     return await tryApiPostJsonReturnJson('auth/login', { username, password });
 };
 
 window.apiLogout = async function () {
+    localStorage.setItem('logged_in', 'false');
     return await tryApiGetReturnJson('auth/logout');
 };
 
 window.apiIsLoggedIn = async function () {
-    return await tryApiGetReturnJson('auth/is_auth');
+    const result = await tryApiGetReturnJson('auth/is_auth', 1);
+    if (result === null) {
+        console.log('API endpoint is_logged_in failed so using cached value');
+        return localStorage.getItem('logged_in') === 'true';
+    }
+    localStorage.setItem('logged_in', result ? 'true' : 'false');
+    return result;
 };
 
 window.apiSignup = async function (username, password) {
@@ -123,6 +131,7 @@ window.apiSignup = async function (username, password) {
 };
 
 window.apiDeleteAccount = async function () {
+    localStorage.setItem('logged_in', 'false');
     return await tryApiGetReturnJson('profile/delete');
 };
 
