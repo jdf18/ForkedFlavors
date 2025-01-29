@@ -83,10 +83,7 @@ function loginUser(req, user) {
 }
 
 function logoutUser(req, res) {
-    req.session.destroy(() => {
-        res.clearCookie('connect.sid');
-        res.redirect('/');
-    });
+    res.clearCookie('connect.sid');
 }
 
 // * ========== HTML GET Endpoints ==========
@@ -142,11 +139,10 @@ apiRouter.post('/auth/login', (req, res) => {
 apiRouter.all('/auth/logout', requireLogin, (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            return res.status(500).json({ message: 'Error logging out' });
+            console.log('Error logging out');
         }
-        logoutUser(req, res);
-        return res.status(200).json({ message: 'Logged out' });
     });
+    return res.status(200).json({ message: 'Logged out' });
 });
 
 apiRouter.all('/auth/is_auth', (req, res) => {
@@ -244,7 +240,7 @@ apiRouter.post('/profile/modify', requireLogin, (req, res) => {
 
     datastore.modifyUser(user.user_id, displayName, bio);
 
-    return res.status(200).send('');
+    return res.status(200).send('true');
 });
 
 // * ===== Recipe Endpoints =====
