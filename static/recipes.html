@@ -42,13 +42,18 @@
         </div>
     </header>
 
-    <main>
+    <main class="pb-5">
         <div class="container my-4">
             <div id="recipes-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
                 <!-- Recipe cards added here -->
             </div>
         </div>
     </main>
+
+    <div id="insertHtmlFooter"></div>
+    <script>
+        pullHTML('footer', 'insertHtmlFooter', () => {});
+    </script>
 
     <script defer src="/js/recipes.js"></script>
     <script>

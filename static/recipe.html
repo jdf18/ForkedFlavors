@@ -24,7 +24,7 @@
     <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
     <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
-    <main>
+    <main class="pb-5">
         <div class="recipe-header">
             <div class="recipe-header-overlay"></div>
             <div class="container h-100 text-white recipe-header-content">
@@ -106,6 +106,11 @@
             </div>
         </div>
     </main>
+
+    <div id="insertHtmlFooter"></div>
+    <script>
+        pullHTML('footer', 'insertHtmlFooter', () => {});
+    </script>
 
     <script defer src="/js/recipe.js"></script>
     <script>

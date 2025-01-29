@@ -1,11 +1,11 @@
 /* global bootstrap */
 
-function openSignup() {
+window.openSignup = function () {
     const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
     const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
     loginModal.hide();
     signupModal.show();
-}
+};
 
 window.initLogin = async function () {
     const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));

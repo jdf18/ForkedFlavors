@@ -6,6 +6,8 @@
     <title>Forked Flavours</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
@@ -23,11 +25,77 @@
     <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
     <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
-    <header class="page-header header container-fluid">
-        <img src="/img/header-background.jpg" class="img-fluid" alt="Responsive image">
-    </header>
+    <main class="pb-5">
+        <div class="header">
+            <div class="header-overlay"></div>
+            <div class="container h-100 text-white header-content">
+                <div class="d-flex justify-content-center">
+                    <h1 class="header-title">Forked Flavors</h1>
+                </div>
+                <div class="text-center">
+                    <h3>Discover, share, and reinvent recipes</h3>
+                </div>
+                <div class="d-flex justify-content-center mt-3 mb-5">
+                    <button type="button" class="btn-lg btn-primary mx-4 rounded-pill" id="view-recipes-btn">View Recipes</button>
+                    <button type="button" class="btn-lg btn-success mx-4 rounded-pill" id="create-account-btn">Create Account</button>
+                </div>
+            </div>
+        </div>
 
+        <div class="container mt-4">
+            <h3 class="text-center mb-4">Features</h3>
+            <div class="row">
+                <div class="col-md-6 d-flex mt-3">
+                    <div class="p-3 border rounded flex-grow-1 d-flex align-items-center">
+                        <i class="bi bi-search fs-2 me-3 pr-4"></i>
+                        <div>
+                            <h5>Browse & Search Recipes</h5>
+                            <p class="mb-0">Find dishes from around the world.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex mt-3">
+                    <div class="p-3 border rounded flex-grow-1 d-flex align-items-center">
+                        <i class="bi bi-pencil-square fs-2 me-3 pr-4"></i>
+                        <div>
+                            <h5>Fork & Customize</h5>
+                            <p class="mb-0">Modify any recipe to make it your own.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex mt-3">
+                    <div class="p-3 border rounded flex-grow-1 d-flex align-items-center">
+                        <i class="bi bi-upload fs-2 me-3 pr-4"></i>
+                        <div>
+                            <h5>Share Your Creations</h5>
+                            <p class="mb-0">Upload photos and let others try your variations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex mt-3">
+                    <div class="p-3 border rounded flex-grow-1 d-flex align-items-center">
+                        <i class="bi bi-github fs-2 me-3 pr-4"></i>
+                        <div>
+                            <h5>Open Source</h5>
+                            <p class="mb-0">Contribute to the project and improve the service.</p>
+                            <span style="font-size: 0.8em">(Once exams are over will be made public)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="insertHtmlFooter"></div>
+    <script>
+        pullHTML('footer', 'insertHtmlFooter', () => {});
+    </script>
 
     <script defer src="/js/index.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initIndex();
+        })
+    </script>
 </body>
 </html>

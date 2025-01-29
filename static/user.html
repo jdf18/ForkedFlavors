@@ -23,7 +23,7 @@
     <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
     <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
-    <main>
+    <main class="pb-5">
         <div class="container my-5">
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -44,6 +44,11 @@
             </div>
         </div>
     </main>
+
+    <div id="insertHtmlFooter"></div>
+    <script>
+        pullHTML('footer', 'insertHtmlFooter', () => {});
+    </script>
 
     <script defer src="/js/recipes.js"></script>
     <script defer src="/js/user.js"></script>
