@@ -14,6 +14,9 @@
         "ecmaVersion": 12
     },
     "rules": {
+        "no-promise-executor-return": "off",
+        "no-loop-func": "off",
+        "no-await-in-loop": "off",
         "no-return-await": "off",
         "func-names": "off",
         "arrow-body-style": "off",

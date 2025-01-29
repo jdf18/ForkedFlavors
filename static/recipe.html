@@ -10,7 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <script src="/js/pullhtml.js"></script> <!-- Contains pullHTML function to load html components -->
     <script src="/js/api.js"></script> <!-- Contains all functions to call the API -->
 
@@ -24,7 +24,7 @@
     <script defer src="/js/navbar.js"></script> <!-- Navbar related js -->
     <script defer src="/js/login.js"></script> <!-- js for login/logout button -->
 
-    <main class="pb-5">
+    <main class="container flex-grow-1 pb-5">
         <div class="recipe-header">
             <div class="recipe-header-overlay"></div>
             <div class="container h-100 text-white recipe-header-content">
@@ -46,7 +46,7 @@
         </p>
         <div class="container my-5">
             <div class="justify-content-center">
-                9<p class="editable" contenteditable="false" id="EditableDescription"></p>
+                <p class="editable" contenteditable="false" id="EditableDescription"></p>
             </div>
         </div>
 

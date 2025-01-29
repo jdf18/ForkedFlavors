@@ -1,3 +1,17 @@
+function showApiStatusMessage(message, isError = true) {
+    const messageBox = document.getElementById('api-status-message');
+    if (!messageBox) return;
+
+    messageBox.textContent = message;
+    messageBox.style.display = 'block';
+    messageBox.style.backgroundColor = isError ? 'rgba(200, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+}
+
+function hideApiStatusMessage() {
+    const messageBox = document.getElementById('api-status-message');
+    if (messageBox) messageBox.style.display = 'none';
+}
+
 window.getCurrentUsername = function () {
     const url = window.location.href;
     return url.substring(url.lastIndexOf('/') + 1);
@@ -17,50 +31,78 @@ window.getCurrentRecipeId = function () {
     return recipeId;
 };
 
+const maxRetries = 10;
+const startDelay = 1000;
+const delayMultiplier = 2;
+
 async function tryApiGetReturnJson(endpoint) {
-    try {
-        const response = await fetch(`/api/${endpoint}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+    let delay = startDelay;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(`/api/${endpoint}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            return result;
+            if (response.ok) {
+                hideApiStatusMessage();
+                return result;
+            }
+            showApiStatusMessage(`API Error: ${result.message}`);
+            console.log(`Error: ${result.message}`);
+            return response.statusCode;
+        } catch (error) {
+            console.log(`${endpoint}: Attempt ${attempt + 1}: Something went wrong. Please try again.`);
+            console.error(error);
+            showApiStatusMessage(`Failed to contact server: Attempt ${attempt}...`);
+            if (attempt <= maxRetries) {
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                delay *= delayMultiplier;
+            }
         }
-        console.log(`Error: ${result.message}`);
-        return response.statusCode;
-    } catch (error) {
-        console.log(`${endpoint}: Something went wrong. Please try again.`);
-        console.error(error);
     }
+    showApiStatusMessage('Failed to reconnect to server: Try again later');
+    console.log(`${endpoint}: All ${maxRetries} retry attempts failed.`);
     return null;
 }
 
 async function tryApiPostJsonReturnJson(endpoint, data) {
-    try {
-        const response = await fetch(`/api/${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+    let delay = startDelay;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(`/api/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            return result;
+            if (response.ok) {
+                hideApiStatusMessage();
+                return result;
+            }
+            showApiStatusMessage(`API Error: ${result.message}`);
+            console.log(`Error: ${endpoint}: ${result.message}`);
+            return response.statusCode;
+        } catch (error) {
+            console.log(`${endpoint}: Something went wrong. Please try again.`);
+            console.error(error);
+            showApiStatusMessage(`Failed to contact server: Attempt ${attempt}...`);
+            if (attempt <= maxRetries) {
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                delay *= delayMultiplier;
+            }
         }
-        console.log(`Error: ${endpoint}: ${result.message}`);
-        return response.statusCode;
-    } catch (error) {
-        console.log(`${endpoint}: Something went wrong. Please try again.`);
-        console.error(error);
     }
+    showApiStatusMessage('Failed to reconnect to server: Try again later');
+    console.log(`${endpoint}: All ${maxRetries} retry attempts failed.`);
     return null;
 }
 

@@ -19,9 +19,15 @@ const apiRouter = express.Router();
 
 // Allow session data to be stored about each client in req.session
 const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 
 app.use(
     session({
+        store: new FileStore({
+            path: './sessions',
+            ttl: 60 * 60 * 6,
+            retries: 0,
+        }),
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
@@ -73,8 +79,11 @@ function loginUser(req, user) {
     req.session.user = { user_id: user.user_id };
 }
 
-function logoutUser(res) {
-    res.clearCookie('connect.sid');
+function logoutUser(req, res) {
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+    });
 }
 
 // * ========== HTML GET Endpoints ==========
@@ -117,7 +126,7 @@ apiRouter.all('/auth/logout', requireLogin, (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Error logging out' });
         }
-        logoutUser(res);
+        logoutUser(req, res);
         return res.status(200).json({ message: 'Logged out' });
     });
 });
