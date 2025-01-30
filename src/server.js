@@ -1,4 +1,4 @@
-const app = require('./app');
+const { app, initTestDB } = require('./app');
 
 const port = 8080;
 

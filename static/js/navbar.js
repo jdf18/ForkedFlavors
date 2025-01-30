@@ -5,6 +5,8 @@ async function createNewRecipe(e) {
     window.location.href = `/recipe/${recipeId}`;
 }
 
+window.createNewRecipe = createNewRecipe;
+
 window.updateNavbar = async function () {
     const isLoggedIn = await window.apiIsLoggedIn();
 

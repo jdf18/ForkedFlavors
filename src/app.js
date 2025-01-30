@@ -8,7 +8,11 @@ const path = require('path');
 const db = require('./db');
 const recipes = require('./recipe');
 
-const datastore = new db.Datastore('./data/');
+let datastore = new db.Datastore('./data/');
+
+function initTestDB() {
+    datastore = new db.Datastore('./test/data/');
+}
 
 // * Express configuration
 const express = require('express');
@@ -167,14 +171,14 @@ apiRouter.post('/profile/create', (req, res) => {
     }
 
     datastore.createUser(username, password);
-    return res.status(501); // Not implemented yet
+    return res.status(200).json({ message: 'Success' }); // Not implemented yet
 });
 
 apiRouter.all('/profile/delete', requireLogin, (req, res) => {
     const user = datastore.getUserFromUserId(req.session.user.user_id);
 
     datastore.deleteUser(user.username);
-    return res.status(501); // Not implemented yet
+    return res.status(200).json({}); // Not implemented yet
 });
 
 apiRouter.get('/profile/get', requireLogin, (req, res) => {
@@ -209,16 +213,25 @@ function getUserFromUsername(req, res, username) {
 }
 
 apiRouter.get('/profile/get/:username', requireLogin, (req, res) => {
+    if (datastore.users.findIndex((user) => user.username === req.params.username) === -1) {
+        return res.status(400).json({ message: 'Invalid username' });
+    }
     return getUserFromUsername(req, res, req.params.username);
 });
 
 apiRouter.post('/profile/get_by_username', requireLogin, (req, res) => {
     const { username } = req.body;
+    if (datastore.users.findIndex((user) => user.username === username) === -1) {
+        return res.status(400).json({ message: 'Invalid username' });
+    }
     return getUserFromUsername(req, res, username);
 });
 
 apiRouter.post('/profile/get_by_id', requireLogin, (req, res) => {
     const { accountId } = req.body;
+    if (datastore.users.findIndex((user) => Number(user.user_id) === Number(accountId)) === -1) {
+        return res.status(400).json({ message: 'Invalid account id' });
+    }
     const user = datastore.getUserFromUserId(accountId);
 
     return res.status(200).json({
@@ -240,7 +253,7 @@ apiRouter.post('/profile/modify', requireLogin, (req, res) => {
 
     datastore.modifyUser(user.user_id, displayName, bio);
 
-    return res.status(200).send('true');
+    return res.status(200).json({ message: 'success' });
 });
 
 // * ===== Recipe Endpoints =====
@@ -266,6 +279,11 @@ apiRouter.all('/recipe/create', requireLogin, (req, res) => {
 
 apiRouter.post('/recipe/fork', requireLogin, (req, res) => {
     const { forkRecipeId } = req.body;
+    if (datastore.recipes.findIndex(
+        (recipe) => Number(recipe.recipe_id) === Number(forkRecipeId),
+    ) === -1) {
+        return res.status(400).json({ message: 'Invalid fork recipe id' });
+    }
     const recipeId = recipes.forkRecipe(datastore, req.session.user.user_id, forkRecipeId);
     console.log(recipeId);
     return res.json(recipeId); // Not implemented yet
@@ -276,9 +294,9 @@ apiRouter.post('/recipe/edit', requireLogin, (req, res) => {
     if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
         recipes.editRecipe(datastore, recipeId, updatedContent);
 
-        return res.status(200);
+        return res.status(200).json({ message: 'Success' });
     }
-    return res.status(401);
+    return res.status(401).json({ message: 'You can only modify recipes you wrote' });
 });
 
 apiRouter.post('/recipe/delete', requireLogin, (req, res) => {
@@ -286,9 +304,9 @@ apiRouter.post('/recipe/delete', requireLogin, (req, res) => {
     if (recipes.getRecipe(datastore, recipeId).user === req.session.user.user_id) {
         datastore.deleteRecipe(recipeId);
 
-        return res.status(200);
+        return res.status(200).json({ message: 'Success' });
     }
-    return res.status(401);
+    return res.status(401).json({ message: 'You can only modify recipes you wrote' });
 });
 
 // apiRouter.post('/log_bake', requireLogin, (req, res) => {
@@ -300,4 +318,7 @@ apiRouter.post('/recipe/delete', requireLogin, (req, res) => {
 app.use('/', htmlRouter);
 app.use('/api', apiRouter);
 
-module.exports = app;
+module.exports = {
+    initTestDB,
+    app,
+};

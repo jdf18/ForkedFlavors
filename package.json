@@ -8,7 +8,8 @@
     "pretest": "npx eslint .",
     "test": "jest --verbose --coverage --silent=true",
     "start": "node ./src/server.js",
-    "dev": "nodemon ./src/server.js"
+    "dev": "nodemon ./src/server.js",
+    "start_test": "node ./src/test-server.js"
   },
   "repository": {
     "type": "git",
