@@ -11,8 +11,8 @@ ForkedFlavors is an open-source recipe-sharing platform where users can **discov
 
 ### **1. Clone the Repository**
 ```sh
-git clone https://github.com/yourusername/forkedflavors.git
-cd forkedflavors
+git clone https://github.com/jdf18/ForkedFlavors.git
+cd ForkedFlavors
 ```
 
 ### **2. Install dependencies **
