@@ -213,7 +213,7 @@ function getUserFromUsername(req, res, username) {
 }
 
 apiRouter.get('/profile/get/:username', requireLogin, (req, res) => {
-    if (datastore.users.findIndex((user) => user.username === req.params.username) === -1) {
+    if (datastore.users.findIndex((user) => user.username === req.params.username) === -1 && !(req.params.username === 'self')) {
         return res.status(400).json({ message: 'Invalid username' });
     }
     return getUserFromUsername(req, res, req.params.username);
@@ -221,7 +221,7 @@ apiRouter.get('/profile/get/:username', requireLogin, (req, res) => {
 
 apiRouter.post('/profile/get_by_username', requireLogin, (req, res) => {
     const { username } = req.body;
-    if (datastore.users.findIndex((user) => user.username === username) === -1) {
+    if (datastore.users.findIndex((user) => user.username === username) === -1 && !(username === 'self')) {
         return res.status(400).json({ message: 'Invalid username' });
     }
     return getUserFromUsername(req, res, username);

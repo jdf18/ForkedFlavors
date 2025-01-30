@@ -39,12 +39,12 @@ jest.mock('../src/db', () => {
     };
 });
 
-const { Datastore } = require('../src/db'); // Mocked class
+const { Datastore } = require('../src/db');
 const recipe = require('../src/recipe');
 
 const path = require('path');
 const fs = require('fs');
-const db = require('../src/db'); // The wrapper being tested
+const db = require('../src/db');
 
 const TEST_DB_DIR = path.join(__dirname, '../test-data/');
 
