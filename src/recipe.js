@@ -3,6 +3,10 @@ function createNewRecipe(datastore, userId) {
 }
 
 function forkRecipe(datastore, userId, forkId) {
+    if (!datastore.initialised) {
+        throw new Error('Database not initialized.');
+    }
+
     const recipeId = createNewRecipe(datastore, userId);
 
     const index = datastore.recipes.findIndex((recipe) => recipe.recipe_id === recipeId);
@@ -20,6 +24,10 @@ function forkRecipe(datastore, userId, forkId) {
 }
 
 function editRecipe(datastore, recipeId, newContent) {
+    if (!datastore.initialised) {
+        throw new Error('Database not initialized.');
+    }
+
     const title = newContent.EditableRecipeTitle;
     const description = newContent.EditableDescription;
     const photo = newContent.EditablePhotoUrl;
@@ -38,29 +46,35 @@ function editRecipe(datastore, recipeId, newContent) {
     }
 
     datastore.editRecipe(recipeId, title, description, ingredients, method, photo);
+
+    return true;
 }
 
-function getBakeImages() {
-
-}
+// function getBakeImages() {
+//
+// }
 
 function getRecipe(datastore, recipeId) {
-    getBakeImages();
+    // getBakeImages();
     return datastore.getRecipe(recipeId);
 }
 
 function getRecipes(datastore) {
+    if (!datastore.initialised) {
+        throw new Error('Database not initialized.');
+    }
+
     const ids = datastore.recipes.map((recipe) => recipe.recipe_id);
     return ids.map((recipeId) => getRecipe(datastore, recipeId));
 }
 
-function addBakeImage() {
-
-}
-
-function logBake() {
-    addBakeImage();
-}
+// function addBakeImage() {
+//
+// }
+//
+// function logBake() {
+//     addBakeImage();
+// }
 
 module.exports = {
     createNewRecipe,
@@ -68,5 +82,5 @@ module.exports = {
     editRecipe,
     getRecipe,
     getRecipes,
-    logBake,
+    // logBake,
 };
