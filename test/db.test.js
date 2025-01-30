@@ -328,3 +328,442 @@ describe('Database modifyUser method', () => {
         datastore.close();
     });
 });
+
+describe('Database createUser method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.createUser('test-username', 'test-password');
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should create a new user in the datastore users object', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = { next_ids: { user: 2, recipe: 2 } };
+
+        datastore.users = [{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }];
+
+        expect(datastore.createUser('test-username', 'test-password')).toBe(true);
+
+        expect(datastore.users).toStrictEqual([
+            {
+                user_id: 1,
+                username: 'test_user',
+                display_name: 'display',
+                bio: 'bio',
+                pfp_link: 'pfp',
+                password_hash: 'test_password',
+            },
+            {
+                user_id: 2,
+                username: 'test-username',
+                display_name: 'test-username',
+                bio: '',
+                pfp_link: null,
+                password_hash: 'test-password',
+            },
+        ]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.users).toStrictEqual([
+            {
+                user_id: 1,
+                username: 'test_user',
+                display_name: 'display',
+                bio: 'bio',
+                pfp_link: 'pfp',
+                password_hash: 'test_password',
+            },
+            {
+                user_id: 2,
+                username: 'test-username',
+                display_name: 'test-username',
+                bio: '',
+                pfp_link: null,
+                password_hash: 'test-password',
+            },
+        ]);
+    });
+});
+
+describe('Database deleteUser method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.deleteUser('test-username');
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should delete the specified user in the datastore users object', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.users = [{
+            user_id: 1,
+            username: 'test_user',
+            display_name: 'display',
+            bio: 'bio',
+            pfp_link: 'pfp',
+            password_hash: 'test_password',
+        }];
+
+        expect(datastore.deleteUser('test_user')).toBe(true);
+
+        expect(datastore.users).toStrictEqual([]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.users).toStrictEqual([]);
+    });
+});
+
+describe('Database createEmptyRecipe method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.createEmptyRecipe(0);
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should create a new recipe in the datastore recipes object', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = { next_ids: { user: 2, recipe: 2 } };
+
+        datastore.recipes = [{
+            recipe_id: 0,
+            upstream: null,
+            title: 'First Recipe',
+            description: '',
+            photo: null,
+            ingredients: [],
+            method: [],
+            owner_id: 0,
+            bakes: [],
+        }];
+
+        const recipeId = datastore.createEmptyRecipe(2);
+        expect(typeof recipeId).toBe('number');
+
+        expect(datastore.recipes).toStrictEqual([
+            {
+                recipe_id: 0,
+                upstream: null,
+                title: 'First Recipe',
+                description: '',
+                photo: null,
+                ingredients: [],
+                method: [],
+                owner_id: 0,
+                bakes: [],
+            },
+            {
+                recipe_id: recipeId,
+                upstream: null,
+                title: 'Untitled Recipe',
+                description: '',
+                photo: null,
+                ingredients: [],
+                method: [],
+                owner_id: 2,
+                bakes: [],
+            },
+        ]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.recipes).toStrictEqual([
+            {
+                recipe_id: 0,
+                upstream: null,
+                title: 'First Recipe',
+                description: '',
+                photo: null,
+                ingredients: [],
+                method: [],
+                owner_id: 0,
+                bakes: [],
+            },
+            {
+                recipe_id: recipeId,
+                upstream: null,
+                title: 'Untitled Recipe',
+                description: '',
+                photo: null,
+                ingredients: [],
+                method: [],
+                owner_id: 2,
+                bakes: [],
+            },
+        ]);
+    });
+});
+
+describe('Database getRecipe method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.getRecipe(0);
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should create a new recipe in the datastore recipes object', () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = { next_ids: { user: 2, recipe: 2 } };
+
+        datastore.recipes = [{
+            recipe_id: 0,
+            upstream: null,
+            title: 'First Recipe',
+            description: 'test description',
+            photo: '/path/to/test.png',
+            ingredients: ['ingredients', 'list'],
+            method: ['list', 'of', 'steps'],
+            owner_id: 0,
+            bakes: [],
+        }];
+
+        expect(datastore.getRecipe(0)).toStrictEqual({
+            upstream: null,
+            title: 'First Recipe',
+            description: 'test description',
+            image: '/path/to/test.png',
+            ingredients: ['ingredients', 'list'],
+            method: ['list', 'of', 'steps'],
+            id: 0,
+            user: 0,
+        });
+    });
+});
+
+describe('Database editRecipe method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.editRecipe(
+                0,
+                'new-title',
+                'new-description',
+                ['new-ingredient'],
+                ['new-method-step'],
+                null,
+            );
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should edit the recipe in the datastore recipes object', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = {
+            next_ids: {
+                user: 2,
+                recipe: 2,
+            },
+        };
+
+        datastore.recipes = [{
+            recipe_id: 0,
+            upstream: null,
+            title: 'First Recipe',
+            description: '',
+            photo: null,
+            ingredients: [],
+            method: [],
+            owner_id: 0,
+            bakes: [],
+        }];
+
+        expect(datastore.editRecipe(
+            0,
+            'new-title',
+            'new-description',
+            ['new-ingredient'],
+            ['new-method-step'],
+            '/path/to/test.png',
+        ))
+            .toBe(true);
+
+        expect(datastore.recipes)
+            .toStrictEqual([
+                {
+                    recipe_id: 0,
+                    upstream: null,
+                    title: 'new-title',
+                    description: 'new-description',
+                    photo: '/path/to/test.png',
+                    ingredients: ['new-ingredient'],
+                    method: ['new-method-step'],
+                    owner_id: 0,
+                    bakes: [],
+                },
+            ]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.recipes)
+            .toStrictEqual([
+                {
+                    recipe_id: 0,
+                    upstream: null,
+                    title: 'new-title',
+                    description: 'new-description',
+                    photo: '/path/to/test.png',
+                    ingredients: ['new-ingredient'],
+                    method: ['new-method-step'],
+                    owner_id: 0,
+                    bakes: [],
+                },
+            ]);
+    });
+
+    it('Should sanitise any html', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = {
+            next_ids: {
+                user: 2,
+                recipe: 2,
+            },
+        };
+
+        datastore.recipes = [{
+            recipe_id: 0,
+            upstream: null,
+            title: 'First Recipe',
+            description: '',
+            photo: null,
+            ingredients: [],
+            method: [],
+            owner_id: 0,
+            bakes: [],
+        }];
+
+        expect(datastore.editRecipe(
+            0,
+            'new-title',
+            '<script>malicious_function()</script>',
+            ['new-ingredient'],
+            ['new-method-step'],
+            '/path/to/test.png',
+        ))
+            .toBe(true);
+
+        expect(datastore.recipes)
+            .toStrictEqual([
+                {
+                    recipe_id: 0,
+                    upstream: null,
+                    title: 'new-title',
+                    description: '',
+                    photo: '/path/to/test.png',
+                    ingredients: ['new-ingredient'],
+                    method: ['new-method-step'],
+                    owner_id: 0,
+                    bakes: [],
+                },
+            ]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.recipes)
+            .toStrictEqual([
+                {
+                    recipe_id: 0,
+                    upstream: null,
+                    title: 'new-title',
+                    description: '',
+                    photo: '/path/to/test.png',
+                    ingredients: ['new-ingredient'],
+                    method: ['new-method-step'],
+                    owner_id: 0,
+                    bakes: [],
+                },
+            ]);
+    });
+});
+
+describe('Database deleteRecipe method', () => {
+    beforeEach(createTestDir);
+    afterAll(cleanTestDir);
+
+    it('Should error when not connected to database', async () => {
+        const datastore = new db.Datastore(getCurrentTestDir());
+        datastore.close();
+
+        await expect(() => {
+            datastore.deleteRecipe(0);
+        }).toThrow('Database not initialized.');
+    });
+
+    it('Should delete the recipe in the datastore recipes object', () => {
+        let datastore = new db.Datastore(getCurrentTestDir());
+        datastore.meta = { next_ids: { user: 2, recipe: 2 } };
+
+        datastore.recipes = [{
+            recipe_id: 0,
+            upstream: null,
+            title: 'First Recipe',
+            description: '',
+            photo: null,
+            ingredients: [],
+            method: [],
+            owner_id: 0,
+            bakes: [],
+        }];
+
+        expect(datastore.deleteRecipe(0)).toBe(true);
+
+        expect(datastore.recipes).toStrictEqual([]);
+
+        // Check file has been updated
+        datastore.close();
+        datastore = new db.Datastore(getCurrentTestDir());
+
+        datastore.load();
+        expect(datastore.recipes).toStrictEqual([]);
+    });
+});
