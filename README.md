@@ -29,18 +29,18 @@ This has the following set up:
 
 ## Getting Started
 
-### **1. Clone the Repository**
+### 1. Clone the Repository
 ```sh
 git clone https://github.com/jdf18/ForkedFlavors.git
 cd ForkedFlavors
 ```
 
-### **2. Install dependencies **
+### 2. Install dependencies
 ```sh
 npm install
 ```
 
-### **3. Run the server **
+### 3. Run the server
 ```sh
 npm start
 ```
